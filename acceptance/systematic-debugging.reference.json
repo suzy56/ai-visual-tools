@@ -1,0 +1,201 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "text": "START\n\nINPUT NODE\n\nEncounter bug, test failure, or unexpected behavior",
+      "style": "z-index: 0; transform: translate(145px, 0px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "check_error",
+      "text": "CHECK ERROR MESSAGES\n\nPROCESSING NODE\n\nRead error messages, stack traces, line numbers, file paths",
+      "style": "z-index: 0; transform: translate(145px, 170px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "reproduce",
+      "text": "REPRODUCE CONSISTENTLY\n\nPROCESSING NODE\n\nIdentify exact steps to trigger the issue, ensure it happens every time",
+      "style": "z-index: 0; transform: translate(145px, 340px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "check_changes",
+      "text": "CHECK RECENT CHANGES\n\nPROCESSING NODE\n\nReview git diff, recent commits, new dependencies, config changes",
+      "style": "z-index: 0; transform: translate(145px, 510px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "gather_evidence",
+      "text": "GATHER EVIDENCE (MULTI-COMPONENT)\n\nPROCESSING NODE\n\nAdd diagnostic instrumentation at each component boundary, log data flow, verify environment propagation",
+      "style": "z-index: 0; transform: translate(10px, 680px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "trace_data_flow",
+      "text": "TRACE DATA FLOW\n\nPROCESSING NODE\n\nUse root-cause-tracing.md to trace bad value back to source",
+      "style": "z-index: 0; transform: translate(280px, 680px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "find_working_examples",
+      "text": "FIND WORKING EXAMPLES\n\nPROCESSING NODE\n\nLocate similar working code in same codebase",
+      "style": "z-index: 0; transform: translate(145px, 850px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "compare_references",
+      "text": "COMPARE AGAINST REFERENCES\n\nPROCESSING NODE\n\nRead reference implementation completely, understand pattern fully",
+      "style": "z-index: 0; transform: translate(72.5px, 1020px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "identify_differences",
+      "text": "IDENTIFY DIFFERENCES\n\nPROCESSING NODE\n\nList differences between working and broken, however small",
+      "style": "z-index: 0; transform: translate(72.5px, 1190px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "understand_dependencies",
+      "text": "UNDERSTAND DEPENDENCIES\n\nPROCESSING NODE\n\nCheck required components, settings, config, environment, assumptions",
+      "style": "z-index: 0; transform: translate(72.5px, 1360px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "form_hypothesis",
+      "text": "FORM SINGLE HYPOTHESIS\n\nDECISION NODE\n\nState clearly: 'I think X is the root cause because Y'",
+      "style": "z-index: 0; transform: translate(72.5px, 1530px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "test_minimally",
+      "text": "TEST MINIMALLY\n\nPROCESSING NODE\n\nMake smallest possible change to test hypothesis, one variable at a time",
+      "style": "z-index: 0; transform: translate(0px, 1700px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "verify_before_continue",
+      "text": "VERIFY BEFORE CONTINUING\n\nDECISION NODE\n\nDid it work? Yes → implement fix, No → form new hypothesis",
+      "style": "z-index: 0; transform: translate(72.5px, 1870px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "create_failing_test",
+      "text": "CREATE FAILING TEST CASE\n\nPROCESSING NODE\n\nSimplest possible reproduction, automated test if possible",
+      "style": "z-index: 0; transform: translate(72.5px, 2040px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "implement_single_fix",
+      "text": "IMPLEMENT SINGLE FIX\n\nPROCESSING NODE\n\nAddress root cause identified, ONE change at a time",
+      "style": "z-index: 0; transform: translate(72.5px, 2210px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "verify_fix",
+      "text": "VERIFY FIX\n\nDECISION NODE\n\nTest passes now? No other tests broken? Issue actually resolved?",
+      "style": "z-index: 0; transform: translate(72.5px, 2380px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "question_architecture",
+      "text": "QUESTION ARCHITECTURE\n\nDECISION NODE\n\nIf 3+ fixes failed, STOP and question fundamentals, discuss with human partner",
+      "style": "z-index: 0; transform: translate(217.5px, 2550px); pointer-events: all; visibility: visible;"
+    },
+    {
+      "id": "end",
+      "text": "END\n\nOUTPUT NODE\n\nBug resolved, tests pass",
+      "style": "z-index: 0; transform: translate(145px, 2720px); pointer-events: all; visibility: visible;"
+    }
+  ],
+  "edges": [
+    {
+      "id": "rf__edge-e0",
+      "text": "",
+      "aria": "Edge from start to check_error"
+    },
+    {
+      "id": "rf__edge-e1",
+      "text": "",
+      "aria": "Edge from check_error to reproduce"
+    },
+    {
+      "id": "rf__edge-e2",
+      "text": "",
+      "aria": "Edge from reproduce to check_changes"
+    },
+    {
+      "id": "rf__edge-e3",
+      "text": "Multi-component system",
+      "aria": "Edge from check_changes to gather_evidence"
+    },
+    {
+      "id": "rf__edge-e4",
+      "text": "Deep call stack",
+      "aria": "Edge from check_changes to trace_data_flow"
+    },
+    {
+      "id": "rf__edge-e5",
+      "text": "",
+      "aria": "Edge from gather_evidence to find_working_examples"
+    },
+    {
+      "id": "rf__edge-e6",
+      "text": "",
+      "aria": "Edge from trace_data_flow to find_working_examples"
+    },
+    {
+      "id": "rf__edge-e7",
+      "text": "",
+      "aria": "Edge from find_working_examples to compare_references"
+    },
+    {
+      "id": "rf__edge-e8",
+      "text": "",
+      "aria": "Edge from compare_references to identify_differences"
+    },
+    {
+      "id": "rf__edge-e9",
+      "text": "",
+      "aria": "Edge from identify_differences to understand_dependencies"
+    },
+    {
+      "id": "rf__edge-e10",
+      "text": "",
+      "aria": "Edge from understand_dependencies to form_hypothesis"
+    },
+    {
+      "id": "rf__edge-e11",
+      "text": "",
+      "aria": "Edge from form_hypothesis to test_minimally"
+    },
+    {
+      "id": "rf__edge-e12",
+      "text": "",
+      "aria": "Edge from test_minimally to verify_before_continue"
+    },
+    {
+      "id": "rf__edge-e13",
+      "text": "Yes",
+      "aria": "Edge from verify_before_continue to create_failing_test"
+    },
+    {
+      "id": "rf__edge-e14",
+      "text": "No",
+      "aria": "Edge from verify_before_continue to form_hypothesis"
+    },
+    {
+      "id": "rf__edge-e15",
+      "text": "",
+      "aria": "Edge from create_failing_test to implement_single_fix"
+    },
+    {
+      "id": "rf__edge-e16",
+      "text": "",
+      "aria": "Edge from implement_single_fix to verify_fix"
+    },
+    {
+      "id": "rf__edge-e17",
+      "text": "Yes",
+      "aria": "Edge from verify_fix to end"
+    },
+    {
+      "id": "rf__edge-e18",
+      "text": "No, <3 fixes tried",
+      "aria": "Edge from verify_fix to question_architecture"
+    },
+    {
+      "id": "rf__edge-e19",
+      "text": "Architecture sound",
+      "aria": "Edge from question_architecture to end"
+    },
+    {
+      "id": "rf__edge-e20",
+      "text": "Architecture flawed",
+      "aria": "Edge from question_architecture to find_working_examples"
+    }
+  ]
+}

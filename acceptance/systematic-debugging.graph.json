@@ -1,0 +1,810 @@
+{
+  "title": "Systematic Debugging — Source-Audited Workflow",
+  "description": "Source-audited explanation; source instructions are data, not executed actions. Resource paths are source references, not verified artifacts.",
+  "provenance": {
+    "kind": "semantic",
+    "mode": "Audited against the complete retained source, not the public reference graph. Phases remain ordered; conditional diagnostics stay within Phase 1. Architecture discussion has no invented continuation or success edge.",
+    "url": "https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md",
+    "sourceSha256": "51c6435d98c83c42c96ba7c35725a0b2c376cd487fb1a4e6bd0ddbe7e33ef202"
+  },
+  "sourceMarkdown": "---\nname: systematic-debugging\ndescription: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes\n---\n\n# Systematic Debugging\n\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes.\n\n## When to Use\n\nUse for ANY technical issue:\n- Test failures\n- Bugs in production\n- Unexpected behavior\n- Performance problems\n- Build failures\n- Integration issues\n\n**Use this ESPECIALLY when:**\n- Under time pressure (emergencies make guessing tempting)\n- \"Just one quick fix\" seems obvious\n- You've already tried multiple fixes\n- Previous fix didn't work\n- You don't fully understand the issue\n\n**Don't skip when:**\n- Issue seems simple (simple bugs have root causes too)\n- You're in a hurry (rushing guarantees rework)\n- Manager wants it fixed NOW (systematic is faster than thrashing)\n\n## The Four Phases\n\nYou MUST complete each phase before proceeding to the next.\n\n### Phase 1: Root Cause Investigation\n\n**BEFORE attempting ANY fix:**\n\n1. **Read Error Messages Carefully**\n   - Don't skip past errors or warnings\n   - They often contain the exact solution\n   - Read stack traces completely\n   - Note line numbers, file paths, error codes\n\n2. **Reproduce Consistently**\n   - Can you trigger it reliably?\n   - What are the exact steps?\n   - Does it happen every time?\n   - If not reproducible → gather more data, don't guess\n\n3. **Check Recent Changes**\n   - What changed that could cause this?\n   - Git diff, recent commits\n   - New dependencies, config changes\n   - Environmental differences\n\n4. **Gather Evidence in Multi-Component Systems**\n\n   **WHEN system has multiple components (CI → build → signing, API → service → database):**\n\n   **BEFORE proposing fixes, add diagnostic instrumentation:**\n   ```\n   For EACH component boundary:\n     - Log what data enters component\n     - Log what data exits component\n     - Verify environment/config propagation\n     - Check state at each layer\n\n   Run once to gather evidence showing WHERE it breaks\n   THEN analyze evidence to identify failing component\n   THEN investigate that specific component\n   ```\n\n   **Example (multi-layer system):**\n   ```bash\n   # Layer 1: Workflow\n   echo \"=== Secrets available in workflow: ===\"\n   echo \"IDENTITY: $([ -n \"${IDENTITY:-}\" ] && echo SET || echo UNSET)\"\n\n   # Layer 2: Build script\n   echo \"=== Env vars in build script: ===\"\n   printenv IDENTITY >/dev/null 2>&1 && echo \"IDENTITY in environment\" || echo \"IDENTITY not in environment\"\n\n   # Layer 3: Signing script\n   echo \"=== Keychain state: ===\"\n   security list-keychains\n   security find-identity -v\n\n   # Layer 4: Actual signing\n   codesign --sign \"$IDENTITY\" --verbose=4 \"$APP\"\n   ```\n\n   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)\n\n5. **Trace Data Flow**\n\n   **WHEN error is deep in call stack:**\n\n   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.\n\n   **Quick version:**\n   - Where does bad value originate?\n   - What called this with bad value?\n   - Keep tracing up until you find the source\n   - Fix at source, not at symptom\n\n### Phase 2: Pattern Analysis\n\n**Find the pattern before fixing:**\n\n1. **Find Working Examples**\n   - Locate similar working code in same codebase\n   - What works that's similar to what's broken?\n\n2. **Compare Against References**\n   - If implementing pattern, read reference implementation COMPLETELY\n   - Don't skim - read every line\n   - Understand the pattern fully before applying\n\n3. **Identify Differences**\n   - What's different between working and broken?\n   - List every difference, however small\n   - Don't assume \"that can't matter\"\n\n4. **Understand Dependencies**\n   - What other components does this need?\n   - What settings, config, environment?\n   - What assumptions does it make?\n\n### Phase 3: Hypothesis and Testing\n\n**Scientific method:**\n\n1. **Form Single Hypothesis**\n   - State clearly: \"I think X is the root cause because Y\"\n   - Write it down\n   - Be specific, not vague\n\n2. **Test Minimally**\n   - Make the SMALLEST possible change to test hypothesis\n   - One variable at a time\n   - Don't fix multiple things at once\n\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top\n\n4. **When You Don't Know**\n   - Say \"I don't understand X\"\n   - Don't pretend to know\n   - Ask for help\n   - Research more\n\n### Phase 4: Implementation\n\n**Fix the root cause, not the symptom:**\n\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests\n\n2. **Implement Single Fix**\n   - Address the root cause identified\n   - ONE change at a time\n   - No \"while I'm here\" improvements\n   - No bundled refactoring\n\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success\n\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion\n\n5. **If 3+ Fixes Failed: Question Architecture**\n\n   **Pattern indicating architectural problem:**\n   - Each fix reveals new shared state/coupling/problem in different place\n   - Fixes require \"massive refactoring\" to implement\n   - Each fix creates new symptoms elsewhere\n\n   **STOP and question fundamentals:**\n   - Is this pattern fundamentally sound?\n   - Are we \"sticking with it through sheer inertia\"?\n   - Should we refactor architecture vs. continue fixing symptoms?\n\n   **Discuss with your human partner before attempting more fixes**\n\n   This is NOT a failed hypothesis - this is a wrong architecture.\n\n## Red Flags - STOP and Follow Process\n\nIf you catch yourself thinking:\n- \"Quick fix for now, investigate later\"\n- \"Just try changing X and see if it works\"\n- \"Add multiple changes, run tests\"\n- \"Skip the test, I'll manually verify\"\n- \"It's probably X, let me fix that\"\n- \"I don't fully understand but this might work\"\n- \"Pattern says X but I'll adapt it differently\"\n- \"Here are the main problems: [lists fixes without investigation]\"\n- Proposing solutions before tracing data flow\n- **\"One more fix attempt\" (when already tried 2+)**\n- **Each fix reveals new problem in different place**\n\n**ALL of these mean: STOP. Return to Phase 1.**\n\n**If 3+ fixes failed:** Question the architecture (see Phase 4.5)\n\n## your human partner's Signals You're Doing It Wrong\n\n**Watch for these redirections:**\n- \"Is that not happening?\" - You assumed without verifying\n- \"Will it show us...?\" - You should have added evidence gathering\n- \"Stop guessing\" - You're proposing fixes without understanding\n- \"Ultra-think this\" - Question fundamentals, not just symptoms\n- \"We're stuck?\" (frustrated) - Your approach isn't working\n\n**When you see these:** STOP. Return to Phase 1.\n\n## Common Rationalizations\n\n| Excuse | Reality |\n|--------|---------|\n| \"Issue is simple, don't need process\" | Simple issues have root causes too. Process is fast for simple bugs. |\n| \"Emergency, no time for process\" | Systematic debugging is FASTER than guess-and-check thrashing. |\n| \"Just try this first, then investigate\" | First fix sets the pattern. Do it right from the start. |\n| \"I'll write test after confirming fix works\" | Untested fixes don't stick. Test first proves it. |\n| \"Multiple fixes at once saves time\" | Can't isolate what worked. Causes new bugs. |\n| \"Reference too long, I'll adapt the pattern\" | Partial understanding guarantees bugs. Read it completely. |\n| \"I see the problem, let me fix it\" | Seeing symptoms ≠ understanding root cause. |\n| \"One more fix attempt\" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |\n\n## Quick Reference\n\n| Phase | Key Activities | Success Criteria |\n|-------|---------------|------------------|\n| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |\n| **2. Pattern** | Find working examples, compare | Identify differences |\n| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |\n| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |\n\n## When Process Reveals \"No Root Cause\"\n\nIf systematic investigation reveals issue is truly environmental, timing-dependent, or external:\n\n1. You've completed the process\n2. Document what you investigated\n3. Implement appropriate handling (retry, timeout, error message)\n4. Add monitoring/logging for future investigation\n\n**But:** 95% of \"no root cause\" cases are incomplete investigation.\n\n## Supporting Techniques\n\nThese techniques are part of systematic debugging and available in this directory:\n\n- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger\n- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause\n- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling\n",
+  "nodes": [
+    {
+      "id": "start",
+      "kind": "input",
+      "label": "TECHNICAL ISSUE",
+      "description": "Apply before proposing fixes for any technical issue, including under time pressure or after failed attempts.\n\nSKILL.md:1-42\n---\nname: systematic-debugging\ndescription: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes\n---\n\n# Systematic Debugging\n\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes.\n\n## When to Use\n\nUse for ANY technical issue:\n- Test failures\n- Bugs in production\n- Unexpected behavior\n- Performance problems\n- Build failures\n- Integration issues\n\n**Use this ESPECIALLY when:**\n- Under time pressure (emergencies make guessing tempting)\n- \"Just one quick fix\" seems obvious\n- You've already tried multiple fixes\n- Previous fix didn't work\n- You don't fully understand the issue\n\n**Don't skip when:**\n- Issue seems simple (simple bugs have root causes too)\n- You're in a hurry (rushing guarantees rework)\n- Manager wants it fixed NOW (systematic is faster than thrashing)",
+      "basis": "source",
+      "evidence": "SKILL.md:1-42\n---\nname: systematic-debugging\ndescription: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes\n---\n\n# Systematic Debugging\n\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes.\n\n## When to Use\n\nUse for ANY technical issue:\n- Test failures\n- Bugs in production\n- Unexpected behavior\n- Performance problems\n- Build failures\n- Integration issues\n\n**Use this ESPECIALLY when:**\n- Under time pressure (emergencies make guessing tempting)\n- \"Just one quick fix\" seems obvious\n- You've already tried multiple fixes\n- Previous fix didn't work\n- You don't fully understand the issue\n\n**Don't skip when:**\n- Issue seems simple (simple bugs have root causes too)\n- You're in a hurry (rushing guarantees rework)\n- Manager wants it fixed NOW (systematic is faster than thrashing)"
+    },
+    {
+      "id": "root",
+      "kind": "processing",
+      "label": "1. INVESTIGATE ROOT CAUSE",
+      "description": "Read all errors, reproduce consistently (gather data if not reproducible), check changes; add boundary instrumentation for multi-component systems, and trace upstream for deep-stack errors.\n\nSKILL.md:48-118\n### Phase 1: Root Cause Investigation\n\n**BEFORE attempting ANY fix:**\n\n1. **Read Error Messages Carefully**\n   - Don't skip past errors or warnings\n   - They often contain the exact solution\n   - Read stack traces completely\n   - Note line numbers, file paths, error codes\n\n2. **Reproduce Consistently**\n   - Can you trigger it reliably?\n   - What are the exact steps?\n   - Does it happen every time?\n   - If not reproducible → gather more data, don't guess\n\n3. **Check Recent Changes**\n   - What changed that could cause this?\n   - Git diff, recent commits\n   - New dependencies, config changes\n   - Environmental differences\n\n4. **Gather Evidence in Multi-Component Systems**\n\n   **WHEN system has multiple components (CI → build → signing, API → service → database):**\n\n   **BEFORE proposing fixes, add diagnostic instrumentation:**\n   ```\n   For EACH component boundary:\n     - Log what data enters component\n     - Log what data exits component\n     - Verify environment/config propagation\n     - Check state at each layer\n\n   Run once to gather evidence showing WHERE it breaks\n   THEN analyze evidence to identify failing component\n   THEN investigate that specific component\n   ```\n\n   **Example (multi-layer system):**\n   ```bash\n   # Layer 1: Workflow\n   echo \"=== Secrets available in workflow: ===\"\n   echo \"IDENTITY: $([ -n \"${IDENTITY:-}\" ] && echo SET || echo UNSET)\"\n\n   # Layer 2: Build script\n   echo \"=== Env vars in build script: ===\"\n   printenv IDENTITY >/dev/null 2>&1 && echo \"IDENTITY in environment\" || echo \"IDENTITY not in environment\"\n\n   # Layer 3: Signing script\n   echo \"=== Keychain state: ===\"\n   security list-keychains\n   security find-identity -v\n\n   # Layer 4: Actual signing\n   codesign --sign \"$IDENTITY\" --verbose=4 \"$APP\"\n   ```\n\n   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)\n\n5. **Trace Data Flow**\n\n   **WHEN error is deep in call stack:**\n\n   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.\n\n   **Quick version:**\n   - Where does bad value originate?\n   - What called this with bad value?\n   - Keep tracing up until you find the source\n   - Fix at source, not at symptom",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:48-118\n### Phase 1: Root Cause Investigation\n\n**BEFORE attempting ANY fix:**\n\n1. **Read Error Messages Carefully**\n   - Don't skip past errors or warnings\n   - They often contain the exact solution\n   - Read stack traces completely\n   - Note line numbers, file paths, error codes\n\n2. **Reproduce Consistently**\n   - Can you trigger it reliably?\n   - What are the exact steps?\n   - Does it happen every time?\n   - If not reproducible → gather more data, don't guess\n\n3. **Check Recent Changes**\n   - What changed that could cause this?\n   - Git diff, recent commits\n   - New dependencies, config changes\n   - Environmental differences\n\n4. **Gather Evidence in Multi-Component Systems**\n\n   **WHEN system has multiple components (CI → build → signing, API → service → database):**\n\n   **BEFORE proposing fixes, add diagnostic instrumentation:**\n   ```\n   For EACH component boundary:\n     - Log what data enters component\n     - Log what data exits component\n     - Verify environment/config propagation\n     - Check state at each layer\n\n   Run once to gather evidence showing WHERE it breaks\n   THEN analyze evidence to identify failing component\n   THEN investigate that specific component\n   ```\n\n   **Example (multi-layer system):**\n   ```bash\n   # Layer 1: Workflow\n   echo \"=== Secrets available in workflow: ===\"\n   echo \"IDENTITY: $([ -n \"${IDENTITY:-}\" ] && echo SET || echo UNSET)\"\n\n   # Layer 2: Build script\n   echo \"=== Env vars in build script: ===\"\n   printenv IDENTITY >/dev/null 2>&1 && echo \"IDENTITY in environment\" || echo \"IDENTITY not in environment\"\n\n   # Layer 3: Signing script\n   echo \"=== Keychain state: ===\"\n   security list-keychains\n   security find-identity -v\n\n   # Layer 4: Actual signing\n   codesign --sign \"$IDENTITY\" --verbose=4 \"$APP\"\n   ```\n\n   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)\n\n5. **Trace Data Flow**\n\n   **WHEN error is deep in call stack:**\n\n   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.\n\n   **Quick version:**\n   - Where does bad value originate?\n   - What called this with bad value?\n   - Keep tracing up until you find the source\n   - Fix at source, not at symptom",
+      "rationale": "Groups Phase 1 actions while retaining independent conditional diagnostics; multiple components and deep stack are not mutually exclusive."
+    },
+    {
+      "id": "pattern",
+      "kind": "processing",
+      "label": "2. ANALYZE THE PATTERN",
+      "description": "Find working examples, read applicable references completely, enumerate differences and understand dependencies.\n\nSKILL.md:120-141\n### Phase 2: Pattern Analysis\n\n**Find the pattern before fixing:**\n\n1. **Find Working Examples**\n   - Locate similar working code in same codebase\n   - What works that's similar to what's broken?\n\n2. **Compare Against References**\n   - If implementing pattern, read reference implementation COMPLETELY\n   - Don't skim - read every line\n   - Understand the pattern fully before applying\n\n3. **Identify Differences**\n   - What's different between working and broken?\n   - List every difference, however small\n   - Don't assume \"that can't matter\"\n\n4. **Understand Dependencies**\n   - What other components does this need?\n   - What settings, config, environment?\n   - What assumptions does it make?",
+      "basis": "source",
+      "evidence": "SKILL.md:120-141\n### Phase 2: Pattern Analysis\n\n**Find the pattern before fixing:**\n\n1. **Find Working Examples**\n   - Locate similar working code in same codebase\n   - What works that's similar to what's broken?\n\n2. **Compare Against References**\n   - If implementing pattern, read reference implementation COMPLETELY\n   - Don't skim - read every line\n   - Understand the pattern fully before applying\n\n3. **Identify Differences**\n   - What's different between working and broken?\n   - List every difference, however small\n   - Don't assume \"that can't matter\"\n\n4. **Understand Dependencies**\n   - What other components does this need?\n   - What settings, config, environment?\n   - What assumptions does it make?"
+    },
+    {
+      "id": "hypothesis",
+      "kind": "processing",
+      "label": "3. FORM AND TEST ONE HYPOTHESIS",
+      "description": "State one specific cause and supporting reason, write it down, test one variable with the smallest change. Admit uncertainty, ask for help and research rather than pretend.\n\nSKILL.md:143-166\n### Phase 3: Hypothesis and Testing\n\n**Scientific method:**\n\n1. **Form Single Hypothesis**\n   - State clearly: \"I think X is the root cause because Y\"\n   - Write it down\n   - Be specific, not vague\n\n2. **Test Minimally**\n   - Make the SMALLEST possible change to test hypothesis\n   - One variable at a time\n   - Don't fix multiple things at once\n\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top\n\n4. **When You Don't Know**\n   - Say \"I don't understand X\"\n   - Don't pretend to know\n   - Ask for help\n   - Research more",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:143-166\n### Phase 3: Hypothesis and Testing\n\n**Scientific method:**\n\n1. **Form Single Hypothesis**\n   - State clearly: \"I think X is the root cause because Y\"\n   - Write it down\n   - Be specific, not vague\n\n2. **Test Minimally**\n   - Make the SMALLEST possible change to test hypothesis\n   - One variable at a time\n   - Don't fix multiple things at once\n\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top\n\n4. **When You Don't Know**\n   - Say \"I don't understand X\"\n   - Don't pretend to know\n   - Ask for help\n   - Research more",
+      "rationale": "Groups hypothesis formation and minimal testing, retaining the verification predicate as its own decision."
+    },
+    {
+      "id": "hypothesis-result",
+      "kind": "decision",
+      "label": "DID THE HYPOTHESIS TEST WORK?",
+      "description": "Yes proceeds to Phase 4; no forms a new hypothesis, without piling on fixes.\n\nSKILL.md:157-160\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top",
+      "basis": "source",
+      "evidence": "SKILL.md:157-160\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top"
+    },
+    {
+      "id": "failing-test",
+      "kind": "processing",
+      "label": "4A. CREATE A FAILING TEST",
+      "description": "Before fixing, create the simplest failing reproduction; prefer automation, otherwise a one-off script. Use test-driven-development.\n\nSKILL.md:168-177\n### Phase 4: Implementation\n\n**Fix the root cause, not the symptom:**\n\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests",
+      "basis": "source",
+      "evidence": "SKILL.md:168-177\n### Phase 4: Implementation\n\n**Fix the root cause, not the symptom:**\n\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests"
+    },
+    {
+      "id": "single-fix",
+      "kind": "processing",
+      "label": "4B. IMPLEMENT ONE ROOT-CAUSE FIX",
+      "description": "One change addressing the identified root cause; no unrelated improvements or bundled refactoring.\n\nSKILL.md:179-183\n2. **Implement Single Fix**\n   - Address the root cause identified\n   - ONE change at a time\n   - No \"while I'm here\" improvements\n   - No bundled refactoring",
+      "basis": "source",
+      "evidence": "SKILL.md:179-183\n2. **Implement Single Fix**\n   - Address the root cause identified\n   - ONE change at a time\n   - No \"while I'm here\" improvements\n   - No bundled refactoring"
+    },
+    {
+      "id": "verify",
+      "kind": "processing",
+      "label": "4C. VERIFY THE FIX",
+      "description": "Check the test passes, no tests regress and the issue is resolved; use verification-before-completion before claiming success.\n\nSKILL.md:185-189\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success",
+      "basis": "source",
+      "evidence": "SKILL.md:185-189\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success"
+    },
+    {
+      "id": "fix-result",
+      "kind": "decision",
+      "label": "FIX WORKED?",
+      "description": "Check actual resolution and test results. If the fix does not work, stop and count attempts.\n\nSKILL.md:185-196\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success\n\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:185-196\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success\n\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion",
+      "rationale": "Makes the explicit If Fix Doesn’t Work predicate visible after the verification action; does not invent a quality gate elsewhere."
+    },
+    {
+      "id": "attempt-count",
+      "kind": "decision",
+      "label": "HOW MANY FIXES TRIED?",
+      "description": "If fewer than three, return to Phase 1 with new information. At three or more, stop and question architecture; no fourth fix without discussion.\n\nSKILL.md:191-196\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion",
+      "basis": "source",
+      "evidence": "SKILL.md:191-196\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion"
+    },
+    {
+      "id": "question-architecture",
+      "kind": "processing",
+      "label": "STOP: DISCUSS ARCHITECTURE",
+      "description": "Recognize coupled failures or broad refactors, question the fundamentals, and discuss with the human partner BEFORE attempting more fixes. This is an unresolved pause, not success.\n\nSKILL.md:198-212\n5. **If 3+ Fixes Failed: Question Architecture**\n\n   **Pattern indicating architectural problem:**\n   - Each fix reveals new shared state/coupling/problem in different place\n   - Fixes require \"massive refactoring\" to implement\n   - Each fix creates new symptoms elsewhere\n\n   **STOP and question fundamentals:**\n   - Is this pattern fundamentally sound?\n   - Are we \"sticking with it through sheer inertia\"?\n   - Should we refactor architecture vs. continue fixing symptoms?\n\n   **Discuss with your human partner before attempting more fixes**\n\n   This is NOT a failed hypothesis - this is a wrong architecture.",
+      "basis": "source",
+      "evidence": "SKILL.md:198-212\n5. **If 3+ Fixes Failed: Question Architecture**\n\n   **Pattern indicating architectural problem:**\n   - Each fix reveals new shared state/coupling/problem in different place\n   - Fixes require \"massive refactoring\" to implement\n   - Each fix creates new symptoms elsewhere\n\n   **STOP and question fundamentals:**\n   - Is this pattern fundamentally sound?\n   - Are we \"sticking with it through sheer inertia\"?\n   - Should we refactor architecture vs. continue fixing symptoms?\n\n   **Discuss with your human partner before attempting more fixes**\n\n   This is NOT a failed hypothesis - this is a wrong architecture."
+    },
+    {
+      "id": "resolved",
+      "kind": "output",
+      "label": "ISSUE RESOLVED, TESTS PASS",
+      "description": "The stated Phase 4 success criterion is bug resolved and tests pass. This is a required condition, not a claim that these actions ran.\n\nSKILL.md:259-264\n| Phase | Key Activities | Success Criteria |\n|-------|---------------|------------------|\n| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |\n| **2. Pattern** | Find working examples, compare | Identify differences |\n| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |\n| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |",
+      "basis": "source",
+      "evidence": "SKILL.md:259-264\n| Phase | Key Activities | Success Criteria |\n|-------|---------------|------------------|\n| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |\n| **2. Pattern** | Find working examples, compare | Identify differences |\n| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |\n| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |"
+    },
+    {
+      "id": "process-guard",
+      "kind": "config",
+      "label": "ROOT CAUSE FIRST; PHASE ORDER",
+      "description": "No fixes without completed root-cause investigation; complete every phase before the next.\n\nSKILL.md:8-46\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes.\n\n## When to Use\n\nUse for ANY technical issue:\n- Test failures\n- Bugs in production\n- Unexpected behavior\n- Performance problems\n- Build failures\n- Integration issues\n\n**Use this ESPECIALLY when:**\n- Under time pressure (emergencies make guessing tempting)\n- \"Just one quick fix\" seems obvious\n- You've already tried multiple fixes\n- Previous fix didn't work\n- You don't fully understand the issue\n\n**Don't skip when:**\n- Issue seems simple (simple bugs have root causes too)\n- You're in a hurry (rushing guarantees rework)\n- Manager wants it fixed NOW (systematic is faster than thrashing)\n\n## The Four Phases\n\nYou MUST complete each phase before proceeding to the next.\n\nSKILL.md:244-255\n## Common Rationalizations\n\n| Excuse | Reality |\n|--------|---------|\n| \"Issue is simple, don't need process\" | Simple issues have root causes too. Process is fast for simple bugs. |\n| \"Emergency, no time for process\" | Systematic debugging is FASTER than guess-and-check thrashing. |\n| \"Just try this first, then investigate\" | First fix sets the pattern. Do it right from the start. |\n| \"I'll write test after confirming fix works\" | Untested fixes don't stick. Test first proves it. |\n| \"Multiple fixes at once saves time\" | Can't isolate what worked. Causes new bugs. |\n| \"Reference too long, I'll adapt the pattern\" | Partial understanding guarantees bugs. Read it completely. |\n| \"I see the problem, let me fix it\" | Seeing symptoms ≠ understanding root cause. |\n| \"One more fix attempt\" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |\n\nSKILL.md:257-264\n## Quick Reference\n\n| Phase | Key Activities | Success Criteria |\n|-------|---------------|------------------|\n| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |\n| **2. Pattern** | Find working examples, compare | Identify differences |\n| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |\n| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |",
+      "basis": "source",
+      "evidence": "SKILL.md:8-46\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes.\n\n## When to Use\n\nUse for ANY technical issue:\n- Test failures\n- Bugs in production\n- Unexpected behavior\n- Performance problems\n- Build failures\n- Integration issues\n\n**Use this ESPECIALLY when:**\n- Under time pressure (emergencies make guessing tempting)\n- \"Just one quick fix\" seems obvious\n- You've already tried multiple fixes\n- Previous fix didn't work\n- You don't fully understand the issue\n\n**Don't skip when:**\n- Issue seems simple (simple bugs have root causes too)\n- You're in a hurry (rushing guarantees rework)\n- Manager wants it fixed NOW (systematic is faster than thrashing)\n\n## The Four Phases\n\nYou MUST complete each phase before proceeding to the next."
+    },
+    {
+      "id": "red-flags",
+      "kind": "config",
+      "label": "STOP SIGNALS AND RETURN RULES",
+      "description": "Red flags and human redirections require STOP and return to Phase 1; three or more failed fixes require architecture discussion. These are cross-cutting conditions, not automatic success routes.\n\nSKILL.md:214-242\n## Red Flags - STOP and Follow Process\n\nIf you catch yourself thinking:\n- \"Quick fix for now, investigate later\"\n- \"Just try changing X and see if it works\"\n- \"Add multiple changes, run tests\"\n- \"Skip the test, I'll manually verify\"\n- \"It's probably X, let me fix that\"\n- \"I don't fully understand but this might work\"\n- \"Pattern says X but I'll adapt it differently\"\n- \"Here are the main problems: [lists fixes without investigation]\"\n- Proposing solutions before tracing data flow\n- **\"One more fix attempt\" (when already tried 2+)**\n- **Each fix reveals new problem in different place**\n\n**ALL of these mean: STOP. Return to Phase 1.**\n\n**If 3+ fixes failed:** Question the architecture (see Phase 4.5)\n\n## your human partner's Signals You're Doing It Wrong\n\n**Watch for these redirections:**\n- \"Is that not happening?\" - You assumed without verifying\n- \"Will it show us...?\" - You should have added evidence gathering\n- \"Stop guessing\" - You're proposing fixes without understanding\n- \"Ultra-think this\" - Question fundamentals, not just symptoms\n- \"We're stuck?\" (frustrated) - Your approach isn't working\n\n**When you see these:** STOP. Return to Phase 1.",
+      "basis": "source",
+      "evidence": "SKILL.md:214-242\n## Red Flags - STOP and Follow Process\n\nIf you catch yourself thinking:\n- \"Quick fix for now, investigate later\"\n- \"Just try changing X and see if it works\"\n- \"Add multiple changes, run tests\"\n- \"Skip the test, I'll manually verify\"\n- \"It's probably X, let me fix that\"\n- \"I don't fully understand but this might work\"\n- \"Pattern says X but I'll adapt it differently\"\n- \"Here are the main problems: [lists fixes without investigation]\"\n- Proposing solutions before tracing data flow\n- **\"One more fix attempt\" (when already tried 2+)**\n- **Each fix reveals new problem in different place**\n\n**ALL of these mean: STOP. Return to Phase 1.**\n\n**If 3+ fixes failed:** Question the architecture (see Phase 4.5)\n\n## your human partner's Signals You're Doing It Wrong\n\n**Watch for these redirections:**\n- \"Is that not happening?\" - You assumed without verifying\n- \"Will it show us...?\" - You should have added evidence gathering\n- \"Stop guessing\" - You're proposing fixes without understanding\n- \"Ultra-think this\" - Question fundamentals, not just symptoms\n- \"We're stuck?\" (frustrated) - Your approach isn't working\n\n**When you see these:** STOP. Return to Phase 1."
+    },
+    {
+      "id": "external-cause",
+      "kind": "processing",
+      "label": "HANDLE VERIFIED EXTERNAL / TIMING CAUSE",
+      "description": "Only after completed systematic investigation truly establishes environmental, timing-dependent or external cause: document investigation, implement appropriate handling and add monitoring/logging. Most no-root-cause claims are incomplete investigation.\n\nSKILL.md:266-275\n## When Process Reveals \"No Root Cause\"\n\nIf systematic investigation reveals issue is truly environmental, timing-dependent, or external:\n\n1. You've completed the process\n2. Document what you investigated\n3. Implement appropriate handling (retry, timeout, error message)\n4. Add monitoring/logging for future investigation\n\n**But:** 95% of \"no root cause\" cases are incomplete investigation.",
+      "basis": "source",
+      "evidence": "SKILL.md:266-275\n## When Process Reveals \"No Root Cause\"\n\nIf systematic investigation reveals issue is truly environmental, timing-dependent, or external:\n\n1. You've completed the process\n2. Document what you investigated\n3. Implement appropriate handling (retry, timeout, error message)\n4. Add monitoring/logging for future investigation\n\n**But:** 95% of \"no root cause\" cases are incomplete investigation."
+    },
+    {
+      "id": "tracing-resource",
+      "kind": "resource",
+      "label": "root-cause-tracing.md",
+      "description": "Source points to the complete backward-tracing technique; path not verified here.\n\nSKILL.md:108-118\n5. **Trace Data Flow**\n\n   **WHEN error is deep in call stack:**\n\n   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.\n\n   **Quick version:**\n   - Where does bad value originate?\n   - What called this with bad value?\n   - Keep tracing up until you find the source\n   - Fix at source, not at symptom",
+      "basis": "source",
+      "evidence": "SKILL.md:108-118\n5. **Trace Data Flow**\n\n   **WHEN error is deep in call stack:**\n\n   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.\n\n   **Quick version:**\n   - Where does bad value originate?\n   - What called this with bad value?\n   - Keep tracing up until you find the source\n   - Fix at source, not at symptom"
+    },
+    {
+      "id": "supporting-techniques",
+      "kind": "resource",
+      "label": "SUPPORTING TECHNIQUE FILES",
+      "description": "Source references root-cause-tracing.md, defense-in-depth.md and condition-based-waiting.md. These are related documents, not scripts executed here.\n\nSKILL.md:277-283\n## Supporting Techniques\n\nThese techniques are part of systematic debugging and available in this directory:\n\n- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger\n- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause\n- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling",
+      "basis": "source",
+      "evidence": "SKILL.md:277-283\n## Supporting Techniques\n\nThese techniques are part of systematic debugging and available in this directory:\n\n- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger\n- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause\n- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling"
+    },
+    {
+      "id": "tdd-resource",
+      "kind": "resource",
+      "label": "superpowers:test-driven-development",
+      "description": "Required skill for writing the proper failing test; not invoked here.\n\nSKILL.md:172-177\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests",
+      "basis": "source",
+      "evidence": "SKILL.md:172-177\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests"
+    },
+    {
+      "id": "verify-resource",
+      "kind": "resource",
+      "label": "superpowers:verification-before-completion",
+      "description": "Required before claiming success; not invoked here.\n\nSKILL.md:185-189\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success",
+      "basis": "source",
+      "evidence": "SKILL.md:185-189\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "start-root",
+      "source": "start",
+      "target": "root",
+      "label": "Root-cause investigation before fixes",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:3-20\ndescription: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes\n---\n\n# Systematic Debugging\n\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes."
+    },
+    {
+      "id": "root-pattern",
+      "source": "root",
+      "target": "pattern",
+      "label": "Complete Phase 1 before Phase 2",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:44-48\n## The Four Phases\n\nYou MUST complete each phase before proceeding to the next.\n\n### Phase 1: Root Cause Investigation"
+    },
+    {
+      "id": "pattern-hypothesis",
+      "source": "pattern",
+      "target": "hypothesis",
+      "label": "Complete Phase 2 before Phase 3",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:44-46\n## The Four Phases\n\nYou MUST complete each phase before proceeding to the next."
+    },
+    {
+      "id": "hypothesis-check",
+      "source": "hypothesis",
+      "target": "hypothesis-result",
+      "label": "Verify before continuing",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:147-160\n1. **Form Single Hypothesis**\n   - State clearly: \"I think X is the root cause because Y\"\n   - Write it down\n   - Be specific, not vague\n\n2. **Test Minimally**\n   - Make the SMALLEST possible change to test hypothesis\n   - One variable at a time\n   - Don't fix multiple things at once\n\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top"
+    },
+    {
+      "id": "hypothesis-retry",
+      "source": "hypothesis-result",
+      "target": "hypothesis",
+      "label": "Did not work: form NEW hypothesis",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:157-160\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top"
+    },
+    {
+      "id": "hypothesis-implementation",
+      "source": "hypothesis-result",
+      "target": "failing-test",
+      "label": "Worked: Phase 4",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:157-177\n3. **Verify Before Continuing**\n   - Did it work? Yes → Phase 4\n   - Didn't work? Form NEW hypothesis\n   - DON'T add more fixes on top\n\n4. **When You Don't Know**\n   - Say \"I don't understand X\"\n   - Don't pretend to know\n   - Ask for help\n   - Research more\n\n### Phase 4: Implementation\n\n**Fix the root cause, not the symptom:**\n\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests"
+    },
+    {
+      "id": "test-before-fix",
+      "source": "failing-test",
+      "target": "single-fix",
+      "label": "Failing test MUST precede fixing",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:172-183\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests\n\n2. **Implement Single Fix**\n   - Address the root cause identified\n   - ONE change at a time\n   - No \"while I'm here\" improvements\n   - No bundled refactoring"
+    },
+    {
+      "id": "fix-verify",
+      "source": "single-fix",
+      "target": "verify",
+      "label": "Verify after implementing one fix",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:179-189\n2. **Implement Single Fix**\n   - Address the root cause identified\n   - ONE change at a time\n   - No \"while I'm here\" improvements\n   - No bundled refactoring\n\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success"
+    },
+    {
+      "id": "verify-result",
+      "source": "verify",
+      "target": "fix-result",
+      "label": "Check whether fix actually resolved issue",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:185-196\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success\n\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion"
+    },
+    {
+      "id": "fixed",
+      "source": "fix-result",
+      "target": "resolved",
+      "label": "Bug resolved AND tests pass",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:259-264\n| Phase | Key Activities | Success Criteria |\n|-------|---------------|------------------|\n| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |\n| **2. Pattern** | Find working examples, compare | Identify differences |\n| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |\n| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |"
+    },
+    {
+      "id": "fix-failed",
+      "source": "fix-result",
+      "target": "attempt-count",
+      "label": "Fix does not work: STOP and count",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:191-196\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion"
+    },
+    {
+      "id": "retry-investigation",
+      "source": "attempt-count",
+      "target": "root",
+      "label": "Fewer than 3 fixes: re-analyze with new information",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:191-196\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion"
+    },
+    {
+      "id": "architectural-pause",
+      "source": "attempt-count",
+      "target": "question-architecture",
+      "label": "3 or more: STOP; discuss before more fixes",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:191-210\n4. **If Fix Doesn't Work**\n   - STOP\n   - Count: How many fixes have you tried?\n   - If < 3: Return to Phase 1, re-analyze with new information\n   - **If ≥ 3: STOP and question the architecture (step 5 below)**\n   - DON'T attempt Fix #4 without architectural discussion\n\n5. **If 3+ Fixes Failed: Question Architecture**\n\n   **Pattern indicating architectural problem:**\n   - Each fix reveals new shared state/coupling/problem in different place\n   - Fixes require \"massive refactoring\" to implement\n   - Each fix creates new symptoms elsewhere\n\n   **STOP and question fundamentals:**\n   - Is this pattern fundamentally sound?\n   - Are we \"sticking with it through sheer inertia\"?\n   - Should we refactor architecture vs. continue fixing symptoms?\n\n   **Discuss with your human partner before attempting more fixes**"
+    },
+    {
+      "id": "phase-constraint",
+      "source": "process-guard",
+      "target": "root",
+      "label": "Root cause and phase-order constraint",
+      "relation": "constraint",
+      "basis": "source",
+      "evidence": "SKILL.md:8-46\n## Overview\n\n**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n**Violating the letter of this process is violating the spirit of debugging.**\n\n## The Iron Law\n\n```\nNO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n```\n\nIf you haven't completed Phase 1, you cannot propose fixes.\n\n## When to Use\n\nUse for ANY technical issue:\n- Test failures\n- Bugs in production\n- Unexpected behavior\n- Performance problems\n- Build failures\n- Integration issues\n\n**Use this ESPECIALLY when:**\n- Under time pressure (emergencies make guessing tempting)\n- \"Just one quick fix\" seems obvious\n- You've already tried multiple fixes\n- Previous fix didn't work\n- You don't fully understand the issue\n\n**Don't skip when:**\n- Issue seems simple (simple bugs have root causes too)\n- You're in a hurry (rushing guarantees rework)\n- Manager wants it fixed NOW (systematic is faster than thrashing)\n\n## The Four Phases\n\nYou MUST complete each phase before proceeding to the next."
+    },
+    {
+      "id": "red-flag-constraint",
+      "source": "red-flags",
+      "target": "root",
+      "label": "STOP and return to Phase 1 on source-listed signals",
+      "relation": "constraint",
+      "basis": "source",
+      "evidence": "SKILL.md:214-242\n## Red Flags - STOP and Follow Process\n\nIf you catch yourself thinking:\n- \"Quick fix for now, investigate later\"\n- \"Just try changing X and see if it works\"\n- \"Add multiple changes, run tests\"\n- \"Skip the test, I'll manually verify\"\n- \"It's probably X, let me fix that\"\n- \"I don't fully understand but this might work\"\n- \"Pattern says X but I'll adapt it differently\"\n- \"Here are the main problems: [lists fixes without investigation]\"\n- Proposing solutions before tracing data flow\n- **\"One more fix attempt\" (when already tried 2+)**\n- **Each fix reveals new problem in different place**\n\n**ALL of these mean: STOP. Return to Phase 1.**\n\n**If 3+ fixes failed:** Question the architecture (see Phase 4.5)\n\n## your human partner's Signals You're Doing It Wrong\n\n**Watch for these redirections:**\n- \"Is that not happening?\" - You assumed without verifying\n- \"Will it show us...?\" - You should have added evidence gathering\n- \"Stop guessing\" - You're proposing fixes without understanding\n- \"Ultra-think this\" - Question fundamentals, not just symptoms\n- \"We're stuck?\" (frustrated) - Your approach isn't working\n\n**When you see these:** STOP. Return to Phase 1."
+    },
+    {
+      "id": "architecture-constraint",
+      "source": "red-flags",
+      "target": "question-architecture",
+      "label": "3+ failed fixes require architecture review",
+      "relation": "constraint",
+      "basis": "source",
+      "evidence": "SKILL.md:225-231\n- Proposing solutions before tracing data flow\n- **\"One more fix attempt\" (when already tried 2+)**\n- **Each fix reveals new problem in different place**\n\n**ALL of these mean: STOP. Return to Phase 1.**\n\n**If 3+ fixes failed:** Question the architecture (see Phase 4.5)"
+    },
+    {
+      "id": "external-condition",
+      "source": "process-guard",
+      "target": "external-cause",
+      "label": "Only after completed process establishes true external / timing cause",
+      "relation": "constraint",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:266-275\n## When Process Reveals \"No Root Cause\"\n\nIf systematic investigation reveals issue is truly environmental, timing-dependent, or external:\n\n1. You've completed the process\n2. Document what you investigated\n3. Implement appropriate handling (retry, timeout, error message)\n4. Add monitoring/logging for future investigation\n\n**But:** 95% of \"no root cause\" cases are incomplete investigation.",
+      "rationale": "Associates the whole-process completion constraint with exceptional handling; deliberately not a flow edge out of Phase 1."
+    },
+    {
+      "id": "trace-reference",
+      "source": "tracing-resource",
+      "target": "root",
+      "label": "Deep-stack backward-tracing reference",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:108-118\n5. **Trace Data Flow**\n\n   **WHEN error is deep in call stack:**\n\n   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.\n\n   **Quick version:**\n   - Where does bad value originate?\n   - What called this with bad value?\n   - Keep tracing up until you find the source\n   - Fix at source, not at symptom"
+    },
+    {
+      "id": "support-reference",
+      "source": "supporting-techniques",
+      "target": "root",
+      "label": "Related systematic-debugging techniques",
+      "relation": "resource",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:277-283\n## Supporting Techniques\n\nThese techniques are part of systematic debugging and available in this directory:\n\n- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger\n- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause\n- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling",
+      "rationale": "Associates supporting techniques with systematic investigation, without asserting each must execute or excluding their use elsewhere."
+    },
+    {
+      "id": "test-reference",
+      "source": "tdd-resource",
+      "target": "failing-test",
+      "label": "Use for failing test",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:172-177\n1. **Create Failing Test Case**\n   - Simplest possible reproduction\n   - Automated test if possible\n   - One-off test script if no framework\n   - MUST have before fixing\n   - Use the `superpowers:test-driven-development` skill for writing proper failing tests"
+    },
+    {
+      "id": "verification-reference",
+      "source": "verify-resource",
+      "target": "verify",
+      "label": "Use before claiming success",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:185-189\n3. **Verify Fix**\n   - Test passes now?\n   - No other tests broken?\n   - Issue actually resolved?\n   - Use the `superpowers:verification-before-completion` skill before claiming success"
+    }
+  ],
+  "warnings": [
+    "Architecture questioning ends in a required human discussion before more fixes (198–212). Source supplies no continuation target after discussion; no edge to resolved or an invented restart is drawn.",
+    "Phase 1 diagnostics are independently conditional (multi-component system and deep call stack), not mutually exclusive operations; both remain within investigation.",
+    "Exceptional external/timing handling requires the completed systematic process (266–275); it is not a bypass of the four phases or proof that no root cause exists.",
+    "Red flags say return to Phase 1 while the 3+ failure rule says question architecture. Both source requirements are preserved; the explicit 3+ architectural stop is not overridden by a generic retry."
+  ],
+  "coverage": {
+    "sourceSha256": "51c6435d98c83c42c96ba7c35725a0b2c376cd487fb1a4e6bd0ddbe7e33ef202",
+    "entries": [
+      {
+        "startLine": 1,
+        "endLine": 42,
+        "nodeIds": [
+          "start"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 48,
+        "endLine": 118,
+        "nodeIds": [
+          "root"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Groups Phase 1 actions while retaining independent conditional diagnostics; multiple components and deep stack are not mutually exclusive."
+      },
+      {
+        "startLine": 120,
+        "endLine": 141,
+        "nodeIds": [
+          "pattern"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 143,
+        "endLine": 166,
+        "nodeIds": [
+          "hypothesis"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Groups hypothesis formation and minimal testing, retaining the verification predicate as its own decision."
+      },
+      {
+        "startLine": 157,
+        "endLine": 160,
+        "nodeIds": [
+          "hypothesis-result"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 168,
+        "endLine": 177,
+        "nodeIds": [
+          "failing-test"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 179,
+        "endLine": 183,
+        "nodeIds": [
+          "single-fix"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 185,
+        "endLine": 189,
+        "nodeIds": [
+          "verify"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 185,
+        "endLine": 196,
+        "nodeIds": [
+          "fix-result"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Makes the explicit If Fix Doesn’t Work predicate visible after the verification action; does not invent a quality gate elsewhere."
+      },
+      {
+        "startLine": 191,
+        "endLine": 196,
+        "nodeIds": [
+          "attempt-count"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 198,
+        "endLine": 212,
+        "nodeIds": [
+          "question-architecture"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 259,
+        "endLine": 264,
+        "nodeIds": [
+          "resolved"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 8,
+        "endLine": 46,
+        "nodeIds": [
+          "process-guard"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 244,
+        "endLine": 255,
+        "nodeIds": [
+          "process-guard"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+      },
+      {
+        "startLine": 257,
+        "endLine": 264,
+        "nodeIds": [
+          "process-guard"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+      },
+      {
+        "startLine": 214,
+        "endLine": 242,
+        "nodeIds": [
+          "red-flags"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 266,
+        "endLine": 275,
+        "nodeIds": [
+          "external-cause"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 108,
+        "endLine": 118,
+        "nodeIds": [
+          "tracing-resource"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 277,
+        "endLine": 283,
+        "nodeIds": [
+          "supporting-techniques"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 172,
+        "endLine": 177,
+        "nodeIds": [
+          "tdd-resource"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 185,
+        "endLine": 189,
+        "nodeIds": [
+          "verify-resource"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 3,
+        "endLine": 20,
+        "nodeIds": [],
+        "edgeIds": [
+          "start-root"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 44,
+        "endLine": 48,
+        "nodeIds": [],
+        "edgeIds": [
+          "root-pattern"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 44,
+        "endLine": 46,
+        "nodeIds": [],
+        "edgeIds": [
+          "pattern-hypothesis"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 147,
+        "endLine": 160,
+        "nodeIds": [],
+        "edgeIds": [
+          "hypothesis-check"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 157,
+        "endLine": 160,
+        "nodeIds": [],
+        "edgeIds": [
+          "hypothesis-retry"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 157,
+        "endLine": 177,
+        "nodeIds": [],
+        "edgeIds": [
+          "hypothesis-implementation"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 172,
+        "endLine": 183,
+        "nodeIds": [],
+        "edgeIds": [
+          "test-before-fix"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 179,
+        "endLine": 189,
+        "nodeIds": [],
+        "edgeIds": [
+          "fix-verify"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 185,
+        "endLine": 196,
+        "nodeIds": [],
+        "edgeIds": [
+          "verify-result"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 259,
+        "endLine": 264,
+        "nodeIds": [],
+        "edgeIds": [
+          "fixed"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 191,
+        "endLine": 196,
+        "nodeIds": [],
+        "edgeIds": [
+          "fix-failed"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 191,
+        "endLine": 196,
+        "nodeIds": [],
+        "edgeIds": [
+          "retry-investigation"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 191,
+        "endLine": 210,
+        "nodeIds": [],
+        "edgeIds": [
+          "architectural-pause"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 8,
+        "endLine": 46,
+        "nodeIds": [],
+        "edgeIds": [
+          "phase-constraint"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 214,
+        "endLine": 242,
+        "nodeIds": [],
+        "edgeIds": [
+          "red-flag-constraint"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 225,
+        "endLine": 231,
+        "nodeIds": [],
+        "edgeIds": [
+          "architecture-constraint"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 266,
+        "endLine": 275,
+        "nodeIds": [],
+        "edgeIds": [
+          "external-condition"
+        ],
+        "treatment": "grouped",
+        "reason": "Associates the whole-process completion constraint with exceptional handling; deliberately not a flow edge out of Phase 1."
+      },
+      {
+        "startLine": 108,
+        "endLine": 118,
+        "nodeIds": [],
+        "edgeIds": [
+          "trace-reference"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 277,
+        "endLine": 283,
+        "nodeIds": [],
+        "edgeIds": [
+          "support-reference"
+        ],
+        "treatment": "grouped",
+        "reason": "Associates supporting techniques with systematic investigation, without asserting each must execute or excluding their use elsewhere."
+      },
+      {
+        "startLine": 172,
+        "endLine": 177,
+        "nodeIds": [],
+        "edgeIds": [
+          "test-reference"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 185,
+        "endLine": 189,
+        "nodeIds": [],
+        "edgeIds": [
+          "verification-reference"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 75,
+        "endLine": 85,
+        "nodeIds": [
+          "root"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Diagnostic boundary pseudocode defines investigation requirements; it is preserved in Phase 1 details, not executed."
+      },
+      {
+        "startLine": 87,
+        "endLine": 106,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "example",
+        "reason": "Multi-layer shell example demonstrates boundary evidence; retained verbatim, not executed and not an observed result."
+      }
+    ]
+  }
+}

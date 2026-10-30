@@ -1,0 +1,469 @@
+{
+  "sourceSha256": "d51b4e20043b13e462aa86c47ea82d43e216eb292871538127f4b12a54e4944f",
+  "entries": [
+    {
+      "startLine": 1,
+      "endLine": 9,
+      "nodeIds": [
+        "request"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 91,
+      "endLine": 106,
+      "nodeIds": [
+        "usage-known"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Makes the explicitly stated Step 1 skip predicate visible without making existing-skill status sufficient to skip."
+    },
+    {
+      "startLine": 91,
+      "endLine": 106,
+      "nodeIds": [
+        "understand"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 108,
+      "endLine": 135,
+      "nodeIds": [
+        "plan"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 25,
+      "endLine": 75,
+      "nodeIds": [
+        "plan"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 137,
+      "endLine": 146,
+      "nodeIds": [
+        "structure"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 249,
+      "endLine": 276,
+      "nodeIds": [
+        "structure"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 541,
+      "endLine": 580,
+      "nodeIds": [
+        "structure"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 148,
+      "endLine": 210,
+      "nodeIds": [
+        "edit"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Groups the two explicitly ordered Step 4 subactivities and retains their complete bodies, examples and writing requirements."
+    },
+    {
+      "startLine": 318,
+      "endLine": 413,
+      "nodeIds": [
+        "edit"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 451,
+      "endLine": 539,
+      "nodeIds": [
+        "edit"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 582,
+      "endLine": 602,
+      "nodeIds": [
+        "edit"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 212,
+      "endLine": 230,
+      "nodeIds": [
+        "validate"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 282,
+      "endLine": 292,
+      "nodeIds": [
+        "validate"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 415,
+      "endLine": 449,
+      "nodeIds": [
+        "validate"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 232,
+      "endLine": 247,
+      "nodeIds": [
+        "iterate"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Groups the explicitly enumerated iteration workflow without adding a request-only condition or an exit state."
+    },
+    {
+      "startLine": 77,
+      "endLine": 85,
+      "nodeIds": [
+        "disclosure"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 278,
+      "endLine": 280,
+      "nodeIds": [
+        "distribution"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 604,
+      "endLine": 619,
+      "nodeIds": [
+        "study-resources"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 87,
+      "endLine": 93,
+      "nodeIds": [],
+      "edgeIds": [
+        "request-known"
+      ],
+      "treatment": "grouped",
+      "reason": "Connects the source trigger to its explicitly ordered creation process; general applicability qualifications remain in source."
+    },
+    {
+      "startLine": 91,
+      "endLine": 95,
+      "nodeIds": [],
+      "edgeIds": [
+        "known-understand"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 89,
+      "endLine": 108,
+      "nodeIds": [],
+      "edgeIds": [
+        "known-plan"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 104,
+      "endLine": 110,
+      "nodeIds": [],
+      "edgeIds": [
+        "understand-plan"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 135,
+      "endLine": 139,
+      "nodeIds": [],
+      "edgeIds": [
+        "plan-structure"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 137,
+      "endLine": 150,
+      "nodeIds": [],
+      "edgeIds": [
+        "structure-edit"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 184,
+      "endLine": 216,
+      "nodeIds": [],
+      "edgeIds": [
+        "edit-validate"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 212,
+      "endLine": 240,
+      "nodeIds": [],
+      "edgeIds": [
+        "validate-iterate"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 234,
+      "endLine": 240,
+      "nodeIds": [],
+      "edgeIds": [
+        "iterate-repeat"
+      ],
+      "treatment": "grouped",
+      "reason": "Represents the local repeat within Step 6 only; does not invent a return to editing or a mandatory endless loop."
+    },
+    {
+      "startLine": 77,
+      "endLine": 85,
+      "nodeIds": [],
+      "edgeIds": [
+        "disclosure-edit"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 278,
+      "endLine": 280,
+      "nodeIds": [],
+      "edgeIds": [
+        "distribution-structure"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 604,
+      "endLine": 619,
+      "nodeIds": [],
+      "edgeIds": [
+        "study-edit"
+      ],
+      "treatment": "grouped",
+      "reason": "Associates explicitly named supporting study resources with authoring; does not claim resource execution or existence."
+    },
+    {
+      "startLine": 11,
+      "endLine": 23,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "context",
+      "reason": "Explains what skills are and the capabilities they provide; not additional creation actions."
+    },
+    {
+      "startLine": 294,
+      "endLine": 316,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Existing plugin-dev skills illustrate good practices, not actions performed by this workflow."
+    },
+    {
+      "startLine": 621,
+      "endLine": 637,
+      "nodeIds": [
+        "edit"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Alternate Implementation Workflow puts Write SKILL.md before Add resources, unlike detailed Step 4. Retained as an alternate summary, not synthesized into a new order; detailed section governs graph order."
+    },
+    {
+      "startLine": 29,
+      "endLine": 40,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 97,
+      "endLine": 102,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 115,
+      "endLine": 133,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 141,
+      "endLine": 144,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 164,
+      "endLine": 182,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 196,
+      "endLine": 210,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 226,
+      "endLine": 228,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 255,
+      "endLine": 267,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 286,
+      "endLine": 292,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 368,
+      "endLine": 395,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 401,
+      "endLine": 413,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 455,
+      "endLine": 465,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 471,
+      "endLine": 486,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 492,
+      "endLine": 506,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 512,
+      "endLine": 537,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    },
+    {
+      "startLine": 545,
+      "endLine": 578,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative questions, snippets or directory layouts are retained with their owning source section, not executed or treated as proof these sample resources exist."
+    }
+  ]
+}

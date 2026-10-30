@@ -1,0 +1,118 @@
+{
+  "title": "Directional trace and routing smoke",
+  "description": "Temporary browser-only probe of distant ancestry, sibling branches, associations, and cyclic feedback.",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "input",
+      "label": "Receive request",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference node root: Receive request. No business procedure was executed."
+    },
+    {
+      "id": "first",
+      "kind": "processing",
+      "label": "Prepare a reproducible input with a deliberately long complete title",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference node first: Prepare a reproducible input with a deliberately long complete title. No business procedure was executed."
+    },
+    {
+      "id": "middle",
+      "kind": "decision",
+      "label": "Verify prepared input against the required acceptance conditions",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference node middle: Verify prepared input against the required acceptance conditions. No business procedure was executed."
+    },
+    {
+      "id": "last",
+      "kind": "output",
+      "label": "Return verified result",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference node last: Return verified result. No business procedure was executed."
+    },
+    {
+      "id": "sibling",
+      "kind": "processing",
+      "label": "Independent alternative operation",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference node sibling: Independent alternative operation. No business procedure was executed."
+    },
+    {
+      "id": "config",
+      "kind": "config",
+      "label": "Static requirement for prepared inputs",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference node config: Static requirement for prepared inputs. No business procedure was executed."
+    }
+  ],
+  "edges": [
+    {
+      "id": "root-first",
+      "source": "root",
+      "target": "first",
+      "label": "Prepare",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship root-first: root → first. Geometry probe only."
+    },
+    {
+      "id": "first-middle",
+      "source": "first",
+      "target": "middle",
+      "label": "Check input",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship first-middle: first → middle. Geometry probe only."
+    },
+    {
+      "id": "middle-last",
+      "source": "middle",
+      "target": "last",
+      "label": "All conditions satisfied",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship middle-last: middle → last. Geometry probe only."
+    },
+    {
+      "id": "root-sibling",
+      "source": "root",
+      "target": "sibling",
+      "label": "Select independent operation",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship root-sibling: root → sibling. Geometry probe only."
+    },
+    {
+      "id": "middle-first",
+      "source": "middle",
+      "target": "first",
+      "label": "Correct input and retry",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship middle-first: middle → first. Geometry probe only."
+    },
+    {
+      "id": "middle-self",
+      "source": "middle",
+      "target": "middle",
+      "label": "Wait for validation evidence",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship middle-self: middle → middle. Geometry probe only."
+    },
+    {
+      "id": "config-first",
+      "source": "config",
+      "target": "first",
+      "label": "Constrains preparation",
+      "relation": "constraint",
+      "basis": "source",
+      "evidence": "Synthetic renderer reference relationship config-first: config → first. Geometry probe only."
+    }
+  ],
+  "warnings": [],
+  "provenance": {
+    "kind": "reference",
+    "mode": "Synthetic rendering-only geometry and trace reference; not an extracted business workflow."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "sourceSha256": "d51b4e20043b13e462aa86c47ea82d43e216eb292871538127f4b12a54e4944f",
+  "graphSha256": "52ebb6a6cafe8f90d2772aba346399becdb21694d6f6791a0e8889dc107115d0",
+  "rendererBefore": {
+    "scripts/render.mjs": "f50556825dce1848a2859deca19e9da7513c625a2cfb0a379257653feb5e5931",
+    "scripts/validate-graph.mjs": "afcf3ea49f46234939ab06f9af966fa5abf047a1a70a1c6ebbc34f07a1a907f5",
+    "assets/circuit-viewer.html": "0c5b63f4dc6f4b29a8bffe479303b25c29bc87c9c04e9014a0d0b253a333ac49"
+  },
+  "rendererAfter": {
+    "scripts/render.mjs": "f50556825dce1848a2859deca19e9da7513c625a2cfb0a379257653feb5e5931",
+    "scripts/validate-graph.mjs": "afcf3ea49f46234939ab06f9af966fa5abf047a1a70a1c6ebbc34f07a1a907f5",
+    "assets/circuit-viewer.html": "0c5b63f4dc6f4b29a8bffe479303b25c29bc87c9c04e9014a0d0b253a333ac49"
+  },
+  "rendererUnchanged": true,
+  "checks": {
+    "nodes": 8,
+    "edges": 9,
+    "edgeLabelsAndEndpointsMatch": true,
+    "sourceExact": true,
+    "descriptionsContained": true,
+    "iterationDetailsInspected": true
+  }
+}

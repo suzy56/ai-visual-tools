@@ -1,0 +1,238 @@
+{
+  "title": "Skill Creator — Captured Public Reference",
+  "description": "Captured public circuit for visual/reference comparison only. Its labels and connections are observations of the public diagram, not an audited semantic extraction or proof of the source document’s requirements.",
+  "provenance": {
+    "url": "https://www.skillhub.club/skills/davepoon-buildwithclaude-skill-creator",
+    "mode": "Captured public DOM diagram. Reference observations only; no source-line coverage or semantic-fidelity claim. Positions removed so the fixed renderer owns layout.",
+    "kind": "reference"
+  },
+  "nodes": [
+    {
+      "id": "start",
+      "kind": "input",
+      "label": "SKILL CREATION REQUEST",
+      "description": "User requests to create or update a Claude Skill",
+      "evidence": "Captured public SkillHub diagram: node 'start' is labeled 'SKILL CREATION REQUEST'; its captured description is 'User requests to create or update a Claude Skill'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "analyze_examples",
+      "kind": "processing",
+      "label": "ANALYZE USAGE EXAMPLES",
+      "description": "Gather concrete examples of how the skill will be used",
+      "evidence": "Captured public SkillHub diagram: node 'analyze_examples' is labeled 'ANALYZE USAGE EXAMPLES'; its captured description is 'Gather concrete examples of how the skill will be used'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "plan_resources",
+      "kind": "processing",
+      "label": "PLAN REUSABLE RESOURCES",
+      "description": "Identify scripts, references, and assets needed",
+      "evidence": "Captured public SkillHub diagram: node 'plan_resources' is labeled 'PLAN REUSABLE RESOURCES'; its captured description is 'Identify scripts, references, and assets needed'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "check_new_skill",
+      "kind": "decision",
+      "label": "NEW OR EXISTING?",
+      "description": "Determine if creating new skill or updating existing",
+      "evidence": "Captured public SkillHub diagram: node 'check_new_skill' is labeled 'NEW OR EXISTING?'; its captured description is 'Determine if creating new skill or updating existing'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "initialize_skill",
+      "kind": "processing",
+      "label": "INITIALIZE SKILL TEMPLATE",
+      "description": "Run init_skill.py to create directory structure",
+      "evidence": "Captured public SkillHub diagram: node 'initialize_skill' is labeled 'INITIALIZE SKILL TEMPLATE'; its captured description is 'Run init_skill.py to create directory structure'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "edit_resources",
+      "kind": "processing",
+      "label": "EDIT RESOURCES",
+      "description": "Create/update scripts, references, and assets",
+      "evidence": "Captured public SkillHub diagram: node 'edit_resources' is labeled 'EDIT RESOURCES'; its captured description is 'Create/update scripts, references, and assets'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "update_skill_md",
+      "kind": "processing",
+      "label": "UPDATE SKILL.MD",
+      "description": "Write skill documentation with proper structure",
+      "evidence": "Captured public SkillHub diagram: node 'update_skill_md' is labeled 'UPDATE SKILL.MD'; its captured description is 'Write skill documentation with proper structure'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "package_skill",
+      "kind": "processing",
+      "label": "PACKAGE & VALIDATE",
+      "description": "Run package_skill.py to validate and create zip",
+      "evidence": "Captured public SkillHub diagram: node 'package_skill' is labeled 'PACKAGE & VALIDATE'; its captured description is 'Run package_skill.py to validate and create zip'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "validation_check",
+      "kind": "decision",
+      "label": "VALIDATION PASS?",
+      "description": "Check if skill passes all validation rules",
+      "evidence": "Captured public SkillHub diagram: node 'validation_check' is labeled 'VALIDATION PASS?'; its captured description is 'Check if skill passes all validation rules'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "test_iterate",
+      "kind": "processing",
+      "label": "TEST & ITERATE",
+      "description": "Use skill on real tasks and gather feedback",
+      "evidence": "Captured public SkillHub diagram: node 'test_iterate' is labeled 'TEST & ITERATE'; its captured description is 'Use skill on real tasks and gather feedback'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "skill_ready",
+      "kind": "output",
+      "label": "SKILL READY",
+      "description": "Skill is packaged and ready for distribution",
+      "evidence": "Captured public SkillHub diagram: node 'skill_ready' is labeled 'SKILL READY'; its captured description is 'Skill is packaged and ready for distribution'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    },
+    {
+      "id": "fix_errors",
+      "kind": "processing",
+      "label": "FIX VALIDATION ERRORS",
+      "description": "Address validation failures and retry packaging",
+      "evidence": "Captured public SkillHub diagram: node 'fix_errors' is labeled 'FIX VALIDATION ERRORS'; its captured description is 'Address validation failures and retry packaging'. This is diagram-observation evidence, not SKILL.md evidence.",
+      "basis": "source"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "source": "start",
+      "target": "analyze_examples",
+      "label": "Begin Creation",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'start' → 'analyze_examples' bears label 'Begin Creation'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e1",
+      "source": "analyze_examples",
+      "target": "plan_resources",
+      "label": "Examples Analyzed",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'analyze_examples' → 'plan_resources' bears label 'Examples Analyzed'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e2",
+      "source": "plan_resources",
+      "target": "check_new_skill",
+      "label": "Resources Planned",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'plan_resources' → 'check_new_skill' bears label 'Resources Planned'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e3",
+      "source": "check_new_skill",
+      "target": "initialize_skill",
+      "label": "New Skill",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'check_new_skill' → 'initialize_skill' bears label 'New Skill'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e4",
+      "source": "check_new_skill",
+      "target": "edit_resources",
+      "label": "Existing Skill",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'check_new_skill' → 'edit_resources' bears label 'Existing Skill'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e5",
+      "source": "initialize_skill",
+      "target": "edit_resources",
+      "label": "Template Created",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'initialize_skill' → 'edit_resources' bears label 'Template Created'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e6",
+      "source": "edit_resources",
+      "target": "update_skill_md",
+      "label": "Resources Ready",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'edit_resources' → 'update_skill_md' bears label 'Resources Ready'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e7",
+      "source": "update_skill_md",
+      "target": "package_skill",
+      "label": "Documentation Complete",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'update_skill_md' → 'package_skill' bears label 'Documentation Complete'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e8",
+      "source": "package_skill",
+      "target": "validation_check",
+      "label": "Packaging Attempted",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'package_skill' → 'validation_check' bears label 'Packaging Attempted'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e9",
+      "source": "validation_check",
+      "target": "skill_ready",
+      "label": "Pass",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'validation_check' → 'skill_ready' bears label 'Pass'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e10",
+      "source": "validation_check",
+      "target": "fix_errors",
+      "label": "Fail",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'validation_check' → 'fix_errors' bears label 'Fail'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e11",
+      "source": "fix_errors",
+      "target": "package_skill",
+      "label": "Errors Fixed",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'fix_errors' → 'package_skill' bears label 'Errors Fixed'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e12",
+      "source": "skill_ready",
+      "target": "test_iterate",
+      "label": "Optional Testing",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'skill_ready' → 'test_iterate' bears label 'Optional Testing'. This records the observed diagram relation, not a source-backed workflow claim."
+    },
+    {
+      "id": "e13",
+      "source": "test_iterate",
+      "target": "edit_resources",
+      "label": "Needs Improvement",
+      "basis": "source",
+      "relation": "flow",
+      "evidence": "Captured public SkillHub diagram: directed connection 'test_iterate' → 'edit_resources' bears label 'Needs Improvement'. This records the observed diagram relation, not a source-backed workflow claim."
+    }
+  ],
+  "warnings": [
+    "Reference capture only: the diagram’s optional testing, feedback target and simplified existing-skill branch are preserved as observations, not endorsed as faithful source semantics. See acceptance/agent-creator.graph.json for the separately audited source explanation."
+  ]
+}

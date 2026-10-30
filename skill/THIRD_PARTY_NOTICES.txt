@@ -1,0 +1,18 @@
+SkillHub reference reconstruction
+================================
+The independently implemented circuit viewer reproduces observable public graph behavior. It does not include SkillHub private application source and is not affiliated with SkillHub.
+Reference: https://www.skillhub.club/skills/davepoon-buildwithclaude-skill-creator
+The PDF Editor text is a user-requested illustrative reference example, not an execution result.
+
+Original skill-creator instructions: davepoon/buildwithclaude
+https://github.com/davepoon/buildwithclaude/tree/main/plugins/all-skills/skills/skill-creator
+Apache License 2.0. Full license: third-party/skill-creator-LICENSE.txt.
+Original skill text is retained as a read-only source fixture; the graph and viewer are independently reconstructed.
+
+Rendering libraries include React / React DOM (Meta and contributors, MIT), React Flow (@xyflow/react, webkid GmbH and contributors, MIT), dagre (@dagrejs/dagre, contributors, MIT), Lucide (ISC), unified / remark-parse (MIT), and yaml (ISC). Bundled upstream license banners are retained in the compiled HTML. The application package-lock.json pins the installed dependency versions.
+
+Source fingerprinting bundles @noble/hashes (Copyright (c) 2022 Paul Miller, MIT). Full license: third-party/noble-hashes-LICENSE.txt.
+https://github.com/paulmillr/noble-hashes
+
+Visual Explainer is an optional, separate MIT-licensed upstream tool; the circuit viewer does not copy its implementation.
+https://github.com/nicobailon/visual-explainer

@@ -1,0 +1,24 @@
+{
+  "before": {
+    "skill/scripts/render.mjs": "87f52d2010949f97f30cf94f9b09a6f34094cc46d8dd8ee2f59ed61c15e1bb19",
+    "skill/scripts/validate-graph.mjs": "bb4f2fcb83d9577b2e991f2fff23cf40336f07a509d180d318d4920576c843d6",
+    "skill/scripts/source.mjs": "04a820409bc8c05c66a0514cc4232f67a8e7e2eea920924533bd8ca592c0b2d9",
+    "skill/assets/circuit-viewer.html": "59a7574749829870de8abd7f058b8c23ea6db761addbae5d5aa5461017bff49d"
+  },
+  "after": {
+    "skill/scripts/render.mjs": "87f52d2010949f97f30cf94f9b09a6f34094cc46d8dd8ee2f59ed61c15e1bb19",
+    "skill/scripts/validate-graph.mjs": "bb4f2fcb83d9577b2e991f2fff23cf40336f07a509d180d318d4920576c843d6",
+    "skill/scripts/source.mjs": "04a820409bc8c05c66a0514cc4232f67a8e7e2eea920924533bd8ca592c0b2d9",
+    "skill/assets/circuit-viewer.html": "59a7574749829870de8abd7f058b8c23ea6db761addbae5d5aa5461017bff49d"
+  },
+  "inputs": [
+    "fixtures/skill-creator.graph.json",
+    "acceptance/agent-creator.graph.json",
+    "acceptance/skill-development.graph.json",
+    "acceptance/skill-development-optimized.graph.json",
+    "acceptance/skill-development-fsm.graph.json",
+    "acceptance/systematic-debugging.graph.json",
+    "fixtures/pdf-editor.md",
+    "/tmp/skill-source-proof.s8t2qK/routing.graph.json"
+  ]
+}

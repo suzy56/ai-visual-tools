@@ -1,0 +1,703 @@
+{
+  "title": "Skill Creator — Source-Audited Workflow",
+  "description": "Source-audited explanation; source instructions are data, not executed actions. Resource paths are source references, not verified artifacts.",
+  "provenance": {
+    "kind": "semantic",
+    "mode": "Semantic extraction audited against fixtures/skill-creator.md; distinct from the captured public reference diagram. Uses detailed Steps 1–6 and only their explicit routing.",
+    "url": "https://www.skillhub.club/skills/davepoon-buildwithclaude-skill-creator",
+    "sourceSha256": "8f838531ae760bcfe0dbbf77450e9935cc27f016b9c47cafe9a98d5306cc1b0f"
+  },
+  "sourceMarkdown": "---\nname: skill-creator\ncategory: development-code\ndescription: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.\nlicense: Complete terms in LICENSE.txt\n---\n\n# Skill Creator\n\nThis skill provides guidance for creating effective skills.\n\n## About Skills\n\nSkills are modular, self-contained packages that extend Claude's capabilities by providing\nspecialized knowledge, workflows, and tools. Think of them as \"onboarding guides\" for specific\ndomains or tasks—they transform Claude from a general-purpose agent into a specialized agent\nequipped with procedural knowledge that no model can fully possess.\n\n### What Skills Provide\n\n1. Specialized workflows - Multi-step procedures for specific domains\n2. Tool integrations - Instructions for working with specific file formats or APIs\n3. Domain expertise - Company-specific knowledge, schemas, business logic\n4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks\n\n### Anatomy of a Skill\n\nEvery skill consists of a required SKILL.md file and optional bundled resources:\n\n```\nskill-name/\n├── SKILL.md (required)\n│   ├── YAML frontmatter metadata (required)\n│   │   ├── name: (required)\n│   │   └── description: (required)\n│   └── Markdown instructions (required)\n└── Bundled Resources (optional)\n    ├── scripts/          - Executable code (Python/Bash/etc.)\n    ├── references/       - Documentation intended to be loaded into context as needed\n    └── assets/           - Files used in output (templates, icons, fonts, etc.)\n```\n\n#### SKILL.md (required)\n\n**Metadata Quality:** The `name` and `description` in YAML frontmatter determine when Claude will use the skill. Be specific about what the skill does and when to use it. Use the third-person (e.g. \"This skill should be used when...\" instead of \"Use this skill when...\").\n\n#### Bundled Resources (optional)\n\n##### Scripts (`scripts/`)\n\nExecutable code (Python/Bash/etc.) for tasks that require deterministic reliability or are repeatedly rewritten.\n\n- **When to include**: When the same code is being rewritten repeatedly or deterministic reliability is needed\n- **Example**: `scripts/rotate_pdf.py` for PDF rotation tasks\n- **Benefits**: Token efficient, deterministic, may be executed without loading into context\n- **Note**: Scripts may still need to be read by Claude for patching or environment-specific adjustments\n\n##### References (`references/`)\n\nDocumentation and reference material intended to be loaded as needed into context to inform Claude's process and thinking.\n\n- **When to include**: For documentation that Claude should reference while working\n- **Examples**: `references/finance.md` for financial schemas, `references/mnda.md` for company NDA template, `references/policies.md` for company policies, `references/api_docs.md` for API specifications\n- **Use cases**: Database schemas, API documentation, domain knowledge, company policies, detailed workflow guides\n- **Benefits**: Keeps SKILL.md lean, loaded only when Claude determines it's needed\n- **Best practice**: If files are large (>10k words), include grep search patterns in SKILL.md\n- **Avoid duplication**: Information should live in either SKILL.md or references files, not both. Prefer references files for detailed information unless it's truly core to the skill—this keeps SKILL.md lean while making information discoverable without hogging the context window. Keep only essential procedural instructions and workflow guidance in SKILL.md; move detailed reference material, schemas, and examples to references files.\n\n##### Assets (`assets/`)\n\nFiles not intended to be loaded into context, but rather used within the output Claude produces.\n\n- **When to include**: When the skill needs files that will be used in the final output\n- **Examples**: `assets/logo.png` for brand assets, `assets/slides.pptx` for PowerPoint templates, `assets/frontend-template/` for HTML/React boilerplate, `assets/font.ttf` for typography\n- **Use cases**: Templates, images, icons, boilerplate code, fonts, sample documents that get copied or modified\n- **Benefits**: Separates output resources from documentation, enables Claude to use files without loading them into context\n\n### Progressive Disclosure Design Principle\n\nSkills use a three-level loading system to manage context efficiently:\n\n1. **Metadata (name + description)** - Always in context (~100 words)\n2. **SKILL.md body** - When skill triggers (<5k words)\n3. **Bundled resources** - As needed by Claude (Unlimited*)\n\n*Unlimited because scripts can be executed without reading into context window.\n\n## Skill Creation Process\n\nTo create a skill, follow the \"Skill Creation Process\" in order, skipping steps only if there is a clear reason why they are not applicable.\n\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.\n\nFor example, when building an image-editor skill, relevant questions include:\n\n- \"What functionality should the image-editor skill support? Editing, rotating, anything else?\"\n- \"Can you give some examples of how this skill would be used?\"\n- \"I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?\"\n- \"What would a user say that should trigger this skill?\"\n\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support.\n\n### Step 2: Planning the Reusable Skill Contents\n\nTo turn concrete examples into an effective skill, analyze each example by:\n\n1. Considering how to execute on the example from scratch\n2. Identifying what scripts, references, and assets would be helpful when executing these workflows repeatedly\n\nExample: When building a `pdf-editor` skill to handle queries like \"Help me rotate this PDF,\" the analysis shows:\n\n1. Rotating a PDF requires re-writing the same code each time\n2. A `scripts/rotate_pdf.py` script would be helpful to store in the skill\n\nExample: When designing a `frontend-webapp-builder` skill for queries like \"Build me a todo app\" or \"Build me a dashboard to track my steps,\" the analysis shows:\n\n1. Writing a frontend webapp requires the same boilerplate HTML/React each time\n2. An `assets/hello-world/` template containing the boilerplate HTML/React project files would be helpful to store in the skill\n\nExample: When building a `big-query` skill to handle queries like \"How many users have logged in today?\" the analysis shows:\n\n1. Querying BigQuery requires re-discovering the table schemas and relationships each time\n2. A `references/schema.md` file documenting the table schemas would be helpful to store in the skill\n\nTo establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets.\n\n### Step 3: Initializing the Skill\n\nAt this point, it is time to actually create the skill.\n\nSkip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.\n\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```\n\nThe script:\n\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted\n\nAfter initialization, customize or remove the generated SKILL.md and example files as needed.\n\n### Step 4: Edit the Skill\n\nWhen editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Focus on including information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively.\n\n#### Start with Reusable Skill Contents\n\nTo begin implementation, start with the reusable resources identified above: `scripts/`, `references/`, and `assets/` files. Note that this step may require user input. For example, when implementing a `brand-guidelines` skill, the user may need to provide brand assets or templates to store in `assets/`, or documentation to store in `references/`.\n\nAlso, delete any example files and directories not needed for the skill. The initialization script creates example files in `scripts/`, `references/`, and `assets/` to demonstrate structure, but most skills won't need all of them.\n\n#### Update SKILL.md\n\n**Writing Style:** Write the entire skill using **imperative/infinitive form** (verb-first instructions), not second person. Use objective, instructional language (e.g., \"To accomplish X, do Y\" rather than \"You should do X\" or \"If you need to do X\"). This maintains consistency and clarity for AI consumption.\n\nTo complete SKILL.md, answer the following questions:\n\n1. What is the purpose of the skill, in a few sentences?\n2. When should the skill be used?\n3. In practice, how should Claude use the skill? All reusable skill contents developed above should be referenced so that Claude knows how to use them.\n\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```\n\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.\n\n### Step 6: Iterate\n\nAfter testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.\n\n**Iteration workflow:**\n1. Use the skill on real tasks\n2. Notice struggles or inefficiencies\n3. Identify how SKILL.md or bundled resources should be updated\n4. Implement changes and test again\n",
+  "nodes": [
+    {
+      "id": "request",
+      "kind": "input",
+      "label": "CREATE OR UPDATE A SKILL",
+      "description": "Receive a request to create or update a skill.\n\nSKILL.md:1-10\n---\nname: skill-creator\ncategory: development-code\ndescription: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.\nlicense: Complete terms in LICENSE.txt\n---\n\n# Skill Creator\n\nThis skill provides guidance for creating effective skills.",
+      "basis": "source",
+      "evidence": "SKILL.md:1-10\n---\nname: skill-creator\ncategory: development-code\ndescription: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.\nlicense: Complete terms in LICENSE.txt\n---\n\n# Skill Creator\n\nThis skill provides guidance for creating effective skills."
+    },
+    {
+      "id": "usage-known",
+      "kind": "decision",
+      "label": "USAGE PATTERNS CLEAR?",
+      "description": "Skip Step 1 only if usage patterns are already clearly understood.\n\nSKILL.md:92-107\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.\n\nFor example, when building an image-editor skill, relevant questions include:\n\n- \"What functionality should the image-editor skill support? Editing, rotating, anything else?\"\n- \"Can you give some examples of how this skill would be used?\"\n- \"I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?\"\n- \"What would a user say that should trigger this skill?\"\n\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support.",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:92-107\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.\n\nFor example, when building an image-editor skill, relevant questions include:\n\n- \"What functionality should the image-editor skill support? Editing, rotating, anything else?\"\n- \"Can you give some examples of how this skill would be used?\"\n- \"I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?\"\n- \"What would a user say that should trigger this skill?\"\n\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support.",
+      "rationale": "Exposes the explicit skip condition, without equating an existing skill with known usage."
+    },
+    {
+      "id": "understand",
+      "kind": "processing",
+      "label": "UNDERSTAND EXAMPLES",
+      "description": "Understand concrete user examples or generated examples validated by user feedback; conclude when functionality is clear.\n\nSKILL.md:92-107\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.\n\nFor example, when building an image-editor skill, relevant questions include:\n\n- \"What functionality should the image-editor skill support? Editing, rotating, anything else?\"\n- \"Can you give some examples of how this skill would be used?\"\n- \"I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?\"\n- \"What would a user say that should trigger this skill?\"\n\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support.",
+      "basis": "source",
+      "evidence": "SKILL.md:92-107\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.\n\nFor example, when building an image-editor skill, relevant questions include:\n\n- \"What functionality should the image-editor skill support? Editing, rotating, anything else?\"\n- \"Can you give some examples of how this skill would be used?\"\n- \"I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?\"\n- \"What would a user say that should trigger this skill?\"\n\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support."
+    },
+    {
+      "id": "plan",
+      "kind": "processing",
+      "label": "PLAN REUSABLE CONTENTS",
+      "description": "Analyze each example from scratch and identify scripts, references and assets that will help repeated workflows.\n\nSKILL.md:109-131\n### Step 2: Planning the Reusable Skill Contents\n\nTo turn concrete examples into an effective skill, analyze each example by:\n\n1. Considering how to execute on the example from scratch\n2. Identifying what scripts, references, and assets would be helpful when executing these workflows repeatedly\n\nExample: When building a `pdf-editor` skill to handle queries like \"Help me rotate this PDF,\" the analysis shows:\n\n1. Rotating a PDF requires re-writing the same code each time\n2. A `scripts/rotate_pdf.py` script would be helpful to store in the skill\n\nExample: When designing a `frontend-webapp-builder` skill for queries like \"Build me a todo app\" or \"Build me a dashboard to track my steps,\" the analysis shows:\n\n1. Writing a frontend webapp requires the same boilerplate HTML/React each time\n2. An `assets/hello-world/` template containing the boilerplate HTML/React project files would be helpful to store in the skill\n\nExample: When building a `big-query` skill to handle queries like \"How many users have logged in today?\" the analysis shows:\n\n1. Querying BigQuery requires re-discovering the table schemas and relationships each time\n2. A `references/schema.md` file documenting the table schemas would be helpful to store in the skill\n\nTo establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets.\n\nSKILL.md:26-76\n### Anatomy of a Skill\n\nEvery skill consists of a required SKILL.md file and optional bundled resources:\n\n```\nskill-name/\n├── SKILL.md (required)\n│   ├── YAML frontmatter metadata (required)\n│   │   ├── name: (required)\n│   │   └── description: (required)\n│   └── Markdown instructions (required)\n└── Bundled Resources (optional)\n    ├── scripts/          - Executable code (Python/Bash/etc.)\n    ├── references/       - Documentation intended to be loaded into context as needed\n    └── assets/           - Files used in output (templates, icons, fonts, etc.)\n```\n\n#### SKILL.md (required)\n\n**Metadata Quality:** The `name` and `description` in YAML frontmatter determine when Claude will use the skill. Be specific about what the skill does and when to use it. Use the third-person (e.g. \"This skill should be used when...\" instead of \"Use this skill when...\").\n\n#### Bundled Resources (optional)\n\n##### Scripts (`scripts/`)\n\nExecutable code (Python/Bash/etc.) for tasks that require deterministic reliability or are repeatedly rewritten.\n\n- **When to include**: When the same code is being rewritten repeatedly or deterministic reliability is needed\n- **Example**: `scripts/rotate_pdf.py` for PDF rotation tasks\n- **Benefits**: Token efficient, deterministic, may be executed without loading into context\n- **Note**: Scripts may still need to be read by Claude for patching or environment-specific adjustments\n\n##### References (`references/`)\n\nDocumentation and reference material intended to be loaded as needed into context to inform Claude's process and thinking.\n\n- **When to include**: For documentation that Claude should reference while working\n- **Examples**: `references/finance.md` for financial schemas, `references/mnda.md` for company NDA template, `references/policies.md` for company policies, `references/api_docs.md` for API specifications\n- **Use cases**: Database schemas, API documentation, domain knowledge, company policies, detailed workflow guides\n- **Benefits**: Keeps SKILL.md lean, loaded only when Claude determines it's needed\n- **Best practice**: If files are large (>10k words), include grep search patterns in SKILL.md\n- **Avoid duplication**: Information should live in either SKILL.md or references files, not both. Prefer references files for detailed information unless it's truly core to the skill—this keeps SKILL.md lean while making information discoverable without hogging the context window. Keep only essential procedural instructions and workflow guidance in SKILL.md; move detailed reference material, schemas, and examples to references files.\n\n##### Assets (`assets/`)\n\nFiles not intended to be loaded into context, but rather used within the output Claude produces.\n\n- **When to include**: When the skill needs files that will be used in the final output\n- **Examples**: `assets/logo.png` for brand assets, `assets/slides.pptx` for PowerPoint templates, `assets/frontend-template/` for HTML/React boilerplate, `assets/font.ttf` for typography\n- **Use cases**: Templates, images, icons, boilerplate code, fonts, sample documents that get copied or modified\n- **Benefits**: Separates output resources from documentation, enables Claude to use files without loading them into context",
+      "basis": "source",
+      "evidence": "SKILL.md:109-131\n### Step 2: Planning the Reusable Skill Contents\n\nTo turn concrete examples into an effective skill, analyze each example by:\n\n1. Considering how to execute on the example from scratch\n2. Identifying what scripts, references, and assets would be helpful when executing these workflows repeatedly\n\nExample: When building a `pdf-editor` skill to handle queries like \"Help me rotate this PDF,\" the analysis shows:\n\n1. Rotating a PDF requires re-writing the same code each time\n2. A `scripts/rotate_pdf.py` script would be helpful to store in the skill\n\nExample: When designing a `frontend-webapp-builder` skill for queries like \"Build me a todo app\" or \"Build me a dashboard to track my steps,\" the analysis shows:\n\n1. Writing a frontend webapp requires the same boilerplate HTML/React each time\n2. An `assets/hello-world/` template containing the boilerplate HTML/React project files would be helpful to store in the skill\n\nExample: When building a `big-query` skill to handle queries like \"How many users have logged in today?\" the analysis shows:\n\n1. Querying BigQuery requires re-discovering the table schemas and relationships each time\n2. A `references/schema.md` file documenting the table schemas would be helpful to store in the skill\n\nTo establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets."
+    },
+    {
+      "id": "init-mode",
+      "kind": "decision",
+      "label": "EXISTING AND ITERATION / PACKAGING?",
+      "description": "Skip initialization only if the skill already exists and iteration or packaging is needed; otherwise initialize a new skill.\n\nSKILL.md:133-139\n### Step 3: Initializing the Skill\n\nAt this point, it is time to actually create the skill.\n\nSkip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.\n\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:133-139\n### Step 3: Initializing the Skill\n\nAt this point, it is time to actually create the skill.\n\nSkip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.\n\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.",
+      "rationale": "Separates the explicit initialization skip from the actual template-generation action."
+    },
+    {
+      "id": "init-new",
+      "kind": "processing",
+      "label": "INITIALIZE TEMPLATE",
+      "description": "Run init_skill.py for a new skill; customize or remove generated examples as needed.\n\nSKILL.md:139-154\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```\n\nThe script:\n\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted\n\nAfter initialization, customize or remove the generated SKILL.md and example files as needed.",
+      "basis": "source",
+      "evidence": "SKILL.md:139-154\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```\n\nThe script:\n\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted\n\nAfter initialization, customize or remove the generated SKILL.md and example files as needed."
+    },
+    {
+      "id": "edit",
+      "kind": "processing",
+      "label": "EDIT RESOURCES THEN SKILL.MD",
+      "description": "Start with reusable resources, request input as needed, delete unnecessary examples, then write verb-first SKILL.md with purpose, triggers and resource usage.\n\nSKILL.md:156-174\n### Step 4: Edit the Skill\n\nWhen editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Focus on including information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively.\n\n#### Start with Reusable Skill Contents\n\nTo begin implementation, start with the reusable resources identified above: `scripts/`, `references/`, and `assets/` files. Note that this step may require user input. For example, when implementing a `brand-guidelines` skill, the user may need to provide brand assets or templates to store in `assets/`, or documentation to store in `references/`.\n\nAlso, delete any example files and directories not needed for the skill. The initialization script creates example files in `scripts/`, `references/`, and `assets/` to demonstrate structure, but most skills won't need all of them.\n\n#### Update SKILL.md\n\n**Writing Style:** Write the entire skill using **imperative/infinitive form** (verb-first instructions), not second person. Use objective, instructional language (e.g., \"To accomplish X, do Y\" rather than \"You should do X\" or \"If you need to do X\"). This maintains consistency and clarity for AI consumption.\n\nTo complete SKILL.md, answer the following questions:\n\n1. What is the purpose of the skill, in a few sentences?\n2. When should the skill be used?\n3. In practice, how should Claude use the skill? All reusable skill contents developed above should be referenced so that Claude knows how to use them.",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:156-174\n### Step 4: Edit the Skill\n\nWhen editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Focus on including information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively.\n\n#### Start with Reusable Skill Contents\n\nTo begin implementation, start with the reusable resources identified above: `scripts/`, `references/`, and `assets/` files. Note that this step may require user input. For example, when implementing a `brand-guidelines` skill, the user may need to provide brand assets or templates to store in `assets/`, or documentation to store in `references/`.\n\nAlso, delete any example files and directories not needed for the skill. The initialization script creates example files in `scripts/`, `references/`, and `assets/` to demonstrate structure, but most skills won't need all of them.\n\n#### Update SKILL.md\n\n**Writing Style:** Write the entire skill using **imperative/infinitive form** (verb-first instructions), not second person. Use objective, instructional language (e.g., \"To accomplish X, do Y\" rather than \"You should do X\" or \"If you need to do X\"). This maintains consistency and clarity for AI consumption.\n\nTo complete SKILL.md, answer the following questions:\n\n1. What is the purpose of the skill, in a few sentences?\n2. When should the skill be used?\n3. In practice, how should Claude use the skill? All reusable skill contents developed above should be referenced so that Claude knows how to use them.",
+      "rationale": "Combines the explicitly ordered two Step 4 subactivities while retaining both bodies and their qualifications."
+    },
+    {
+      "id": "package",
+      "kind": "processing",
+      "label": "RUN PACKAGING AND VALIDATION",
+      "description": "Run package_skill.py, optionally select an output directory, and automatically validate before ZIP creation. Failed validation reports errors and exits without a package.\n\nSKILL.md:176-200\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```\n\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.",
+      "basis": "source",
+      "evidence": "SKILL.md:176-200\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```\n\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again."
+    },
+    {
+      "id": "validate",
+      "kind": "decision",
+      "label": "VALIDATION PASSES?",
+      "description": "The script packages only when validation passes; failures report errors and produce no package.\n\nSKILL.md:190-200\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:190-200\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.",
+      "rationale": "Separates the source-specified validation result from invocation so both explicit outcomes can be represented."
+    },
+    {
+      "id": "repair",
+      "kind": "processing",
+      "label": "FIX VALIDATION ERRORS",
+      "description": "Fix any reported validation errors and rerun the packaging command.\n\nSKILL.md:200-200\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.",
+      "basis": "source",
+      "evidence": "SKILL.md:200-200\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again."
+    },
+    {
+      "id": "ready",
+      "kind": "output",
+      "label": "DISTRIBUTABLE ZIP",
+      "description": "A passing package includes all files and preserves directory structure for sharing; this is a described deliverable, not an executed result.\n\nSKILL.md:178-200\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```\n\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.",
+      "basis": "source",
+      "evidence": "SKILL.md:178-200\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```\n\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again."
+    },
+    {
+      "id": "iteration",
+      "kind": "processing",
+      "label": "USE, NOTICE, UPDATE AND RETEST",
+      "description": "Use on real tasks, notice struggles, identify updates, implement and test again. User improvement requests may occur; they are not a mandatory gate.\n\nSKILL.md:202-210\n### Step 6: Iterate\n\nAfter testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.\n\n**Iteration workflow:**\n1. Use the skill on real tasks\n2. Notice struggles or inefficiencies\n3. Identify how SKILL.md or bundled resources should be updated\n4. Implement changes and test again",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:202-210\n### Step 6: Iterate\n\nAfter testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.\n\n**Iteration workflow:**\n1. Use the skill on real tasks\n2. Notice struggles or inefficiencies\n3. Identify how SKILL.md or bundled resources should be updated\n4. Implement changes and test again",
+      "rationale": "Groups the four stated iteration actions without an invented request-only predicate."
+    },
+    {
+      "id": "disclosure",
+      "kind": "config",
+      "label": "PROGRESSIVE DISCLOSURE",
+      "description": "Metadata always loaded; body on trigger; bundled resources as needed, with scripts executable without loading their source.\n\nSKILL.md:78-86\n### Progressive Disclosure Design Principle\n\nSkills use a three-level loading system to manage context efficiently:\n\n1. **Metadata (name + description)** - Always in context (~100 words)\n2. **SKILL.md body** - When skill triggers (<5k words)\n3. **Bundled resources** - As needed by Claude (Unlimited*)\n\n*Unlimited because scripts can be executed without reading into context window.",
+      "basis": "source",
+      "evidence": "SKILL.md:78-86\n### Progressive Disclosure Design Principle\n\nSkills use a three-level loading system to manage context efficiently:\n\n1. **Metadata (name + description)** - Always in context (~100 words)\n2. **SKILL.md body** - When skill triggers (<5k words)\n3. **Bundled resources** - As needed by Claude (Unlimited*)\n\n*Unlimited because scripts can be executed without reading into context window."
+    },
+    {
+      "id": "init-script",
+      "kind": "resource",
+      "label": "scripts/init_skill.py",
+      "description": "Source-named template initializer; not executed or existence-verified here.\n\nSKILL.md:139-152\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```\n\nThe script:\n\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted",
+      "basis": "source",
+      "evidence": "SKILL.md:139-152\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```\n\nThe script:\n\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted"
+    },
+    {
+      "id": "package-script",
+      "kind": "resource",
+      "label": "scripts/package_skill.py",
+      "description": "Source-named packaging/validation script with optional output directory; not executed or existence-verified here.\n\nSKILL.md:176-188\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```",
+      "basis": "source",
+      "evidence": "SKILL.md:176-188\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```"
+    }
+  ],
+  "edges": [
+    {
+      "id": "begin",
+      "source": "request",
+      "target": "usage-known",
+      "label": "Begin ordered creation process",
+      "relation": "flow",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:88-96\n## Skill Creation Process\n\nTo create a skill, follow the \"Skill Creation Process\" in order, skipping steps only if there is a clear reason why they are not applicable.\n\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.",
+      "rationale": "Connects the source trigger to the explicitly ordered process; applicability skips remain qualified."
+    },
+    {
+      "id": "understand-needed",
+      "source": "usage-known",
+      "target": "understand",
+      "label": "Usage patterns not clearly understood",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:92-96\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback."
+    },
+    {
+      "id": "skip-understand",
+      "source": "usage-known",
+      "target": "plan",
+      "label": "Already understood: skip Step 1",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:90-109\nTo create a skill, follow the \"Skill Creation Process\" in order, skipping steps only if there is a clear reason why they are not applicable.\n\n### Step 1: Understanding the Skill with Concrete Examples\n\nSkip this step only when the skill's usage patterns are already clearly understood. It remains valuable even when working with an existing skill.\n\nTo create an effective skill, clearly understand concrete examples of how the skill will be used. This understanding can come from either direct user examples or generated examples that are validated with user feedback.\n\nFor example, when building an image-editor skill, relevant questions include:\n\n- \"What functionality should the image-editor skill support? Editing, rotating, anything else?\"\n- \"Can you give some examples of how this skill would be used?\"\n- \"I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?\"\n- \"What would a user say that should trigger this skill?\"\n\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support.\n\n### Step 2: Planning the Reusable Skill Contents"
+    },
+    {
+      "id": "understand-plan",
+      "source": "understand",
+      "target": "plan",
+      "label": "Functionality clear",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:105-111\nTo avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.\n\nConclude this step when there is a clear sense of the functionality the skill should support.\n\n### Step 2: Planning the Reusable Skill Contents\n\nTo turn concrete examples into an effective skill, analyze each example by:"
+    },
+    {
+      "id": "plan-init",
+      "source": "plan",
+      "target": "init-mode",
+      "label": "Resource list established",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:131-139\nTo establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets.\n\n### Step 3: Initializing the Skill\n\nAt this point, it is time to actually create the skill.\n\nSkip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.\n\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable."
+    },
+    {
+      "id": "new-init",
+      "source": "init-mode",
+      "target": "init-new",
+      "label": "New skill: always initialize",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:137-139\nSkip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.\n\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable."
+    },
+    {
+      "id": "skip-init",
+      "source": "init-mode",
+      "target": "edit",
+      "label": "Existing and iteration / packaging needed: skip initialization",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:137-158\nSkip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.\n\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```\n\nThe script:\n\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted\n\nAfter initialization, customize or remove the generated SKILL.md and example files as needed.\n\n### Step 4: Edit the Skill\n\nWhen editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Focus on including information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively."
+    },
+    {
+      "id": "init-edit",
+      "source": "init-new",
+      "target": "edit",
+      "label": "Customize template then edit",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:149-158\n- Creates the skill directory at the specified path\n- Generates a SKILL.md template with proper frontmatter and TODO placeholders\n- Creates example resource directories: `scripts/`, `references/`, and `assets/`\n- Adds example files in each directory that can be customized or deleted\n\nAfter initialization, customize or remove the generated SKILL.md and example files as needed.\n\n### Step 4: Edit the Skill\n\nWhen editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Focus on including information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively."
+    },
+    {
+      "id": "edit-package",
+      "source": "edit",
+      "target": "package",
+      "label": "When skill is ready: package",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:170-178\nTo complete SKILL.md, answer the following questions:\n\n1. What is the purpose of the skill, in a few sentences?\n2. When should the skill be used?\n3. In practice, how should Claude use the skill? All reusable skill contents developed above should be referenced so that Claude knows how to use them.\n\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:"
+    },
+    {
+      "id": "automatic-validation",
+      "source": "package",
+      "target": "validate",
+      "label": "Script validates before packaging",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:190-198\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution."
+    },
+    {
+      "id": "pass-package",
+      "source": "validate",
+      "target": "ready",
+      "label": "Validation passes: create ZIP",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:198-200\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again."
+    },
+    {
+      "id": "failed-validation",
+      "source": "validate",
+      "target": "repair",
+      "label": "Validation fails: report errors, no package",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:200-200\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again."
+    },
+    {
+      "id": "rerun-packaging",
+      "source": "repair",
+      "target": "package",
+      "label": "Fix errors and run packaging again",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:200-200\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again."
+    },
+    {
+      "id": "next-iteration",
+      "source": "ready",
+      "target": "iteration",
+      "label": "Step 6: after testing, real-task iteration",
+      "relation": "flow",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:176-210\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```\n\nThe packaging script will:\n\n1. **Validate** the skill automatically, checking:\n   - YAML frontmatter format and required fields\n   - Skill naming conventions and directory structure\n   - Description completeness and quality\n   - File organization and resource references\n\n2. **Package** the skill if validation passes, creating a zip file named after the skill (e.g., `my-skill.zip`) that includes all files and maintains the proper directory structure for distribution.\n\nIf validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.\n\n### Step 6: Iterate\n\nAfter testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.\n\n**Iteration workflow:**\n1. Use the skill on real tasks\n2. Notice struggles or inefficiencies\n3. Identify how SKILL.md or bundled resources should be updated\n4. Implement changes and test again",
+      "rationale": "Preserves the declared Step 5→6 order, with Step 6 after-testing qualification; does not assert the ZIP itself was tested or a user request is required."
+    },
+    {
+      "id": "repeat-iteration",
+      "source": "iteration",
+      "target": "iteration",
+      "label": "Implement changes and test again",
+      "relation": "flow",
+      "basis": "abstraction",
+      "evidence": "SKILL.md:204-210\nAfter testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.\n\n**Iteration workflow:**\n1. Use the skill on real tasks\n2. Notice struggles or inefficiencies\n3. Identify how SKILL.md or bundled resources should be updated\n4. Implement changes and test again",
+      "rationale": "Summarizes the local iteration repeat, not an unsupported return to the packaging gate."
+    },
+    {
+      "id": "disclosure-edit",
+      "source": "disclosure",
+      "target": "edit",
+      "label": "Constrains content loading",
+      "relation": "constraint",
+      "basis": "source",
+      "evidence": "SKILL.md:78-86\n### Progressive Disclosure Design Principle\n\nSkills use a three-level loading system to manage context efficiently:\n\n1. **Metadata (name + description)** - Always in context (~100 words)\n2. **SKILL.md body** - When skill triggers (<5k words)\n3. **Bundled resources** - As needed by Claude (Unlimited*)\n\n*Unlimited because scripts can be executed without reading into context window."
+    },
+    {
+      "id": "init-resource",
+      "source": "init-script",
+      "target": "init-new",
+      "label": "Run initializer for new skills",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:139-145\nWhen creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.\n\nUsage:\n\n```bash\nscripts/init_skill.py <skill-name> --path <output-directory>\n```"
+    },
+    {
+      "id": "package-resource",
+      "source": "package-script",
+      "target": "package",
+      "label": "Run packaging command",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:176-188\n### Step 5: Packaging a Skill\n\nOnce the skill is ready, it should be packaged into a distributable zip file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder>\n```\n\nOptional output directory specification:\n\n```bash\nscripts/package_skill.py <path/to/skill-folder> ./dist\n```"
+    }
+  ],
+  "warnings": [
+    "This creator source explicitly requires ZIP packaging and validation-error correction. Those rules are specific to this document and must not be transferred to plugin skill-development.",
+    "The generic process allows skipping only with a clear inapplicability reason (90); only the explicit Step 1 and Step 3 skip predicates are expanded.",
+    "Step 6 says users may request improvements, not that improvement requests are a mandatory decision gate; its stated iteration workflow is preserved directly."
+  ],
+  "coverage": {
+    "sourceSha256": "8f838531ae760bcfe0dbbf77450e9935cc27f016b9c47cafe9a98d5306cc1b0f",
+    "entries": [
+      {
+        "startLine": 1,
+        "endLine": 10,
+        "nodeIds": [
+          "request"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 92,
+        "endLine": 107,
+        "nodeIds": [
+          "usage-known"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Exposes the explicit skip condition, without equating an existing skill with known usage."
+      },
+      {
+        "startLine": 92,
+        "endLine": 107,
+        "nodeIds": [
+          "understand"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 109,
+        "endLine": 131,
+        "nodeIds": [
+          "plan"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 26,
+        "endLine": 76,
+        "nodeIds": [
+          "plan"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+      },
+      {
+        "startLine": 133,
+        "endLine": 139,
+        "nodeIds": [
+          "init-mode"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Separates the explicit initialization skip from the actual template-generation action."
+      },
+      {
+        "startLine": 139,
+        "endLine": 154,
+        "nodeIds": [
+          "init-new"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 156,
+        "endLine": 174,
+        "nodeIds": [
+          "edit"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Combines the explicitly ordered two Step 4 subactivities while retaining both bodies and their qualifications."
+      },
+      {
+        "startLine": 176,
+        "endLine": 200,
+        "nodeIds": [
+          "package"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 190,
+        "endLine": 200,
+        "nodeIds": [
+          "validate"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Separates the source-specified validation result from invocation so both explicit outcomes can be represented."
+      },
+      {
+        "startLine": 200,
+        "endLine": 200,
+        "nodeIds": [
+          "repair"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 178,
+        "endLine": 200,
+        "nodeIds": [
+          "ready"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 202,
+        "endLine": 210,
+        "nodeIds": [
+          "iteration"
+        ],
+        "edgeIds": [],
+        "treatment": "grouped",
+        "reason": "Groups the four stated iteration actions without an invented request-only predicate."
+      },
+      {
+        "startLine": 78,
+        "endLine": 86,
+        "nodeIds": [
+          "disclosure"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 139,
+        "endLine": 152,
+        "nodeIds": [
+          "init-script"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 176,
+        "endLine": 188,
+        "nodeIds": [
+          "package-script"
+        ],
+        "edgeIds": [],
+        "treatment": "represented",
+        "reason": "Retains the explicit source instruction and its full body."
+      },
+      {
+        "startLine": 88,
+        "endLine": 96,
+        "nodeIds": [],
+        "edgeIds": [
+          "begin"
+        ],
+        "treatment": "grouped",
+        "reason": "Connects the source trigger to the explicitly ordered process; applicability skips remain qualified."
+      },
+      {
+        "startLine": 92,
+        "endLine": 96,
+        "nodeIds": [],
+        "edgeIds": [
+          "understand-needed"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 90,
+        "endLine": 109,
+        "nodeIds": [],
+        "edgeIds": [
+          "skip-understand"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 105,
+        "endLine": 111,
+        "nodeIds": [],
+        "edgeIds": [
+          "understand-plan"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 131,
+        "endLine": 139,
+        "nodeIds": [],
+        "edgeIds": [
+          "plan-init"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 137,
+        "endLine": 139,
+        "nodeIds": [],
+        "edgeIds": [
+          "new-init"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 137,
+        "endLine": 158,
+        "nodeIds": [],
+        "edgeIds": [
+          "skip-init"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 149,
+        "endLine": 158,
+        "nodeIds": [],
+        "edgeIds": [
+          "init-edit"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 170,
+        "endLine": 178,
+        "nodeIds": [],
+        "edgeIds": [
+          "edit-package"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 190,
+        "endLine": 198,
+        "nodeIds": [],
+        "edgeIds": [
+          "automatic-validation"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 198,
+        "endLine": 200,
+        "nodeIds": [],
+        "edgeIds": [
+          "pass-package"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 200,
+        "endLine": 200,
+        "nodeIds": [],
+        "edgeIds": [
+          "failed-validation"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 200,
+        "endLine": 200,
+        "nodeIds": [],
+        "edgeIds": [
+          "rerun-packaging"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 176,
+        "endLine": 210,
+        "nodeIds": [],
+        "edgeIds": [
+          "next-iteration"
+        ],
+        "treatment": "grouped",
+        "reason": "Preserves the declared Step 5→6 order, with Step 6 after-testing qualification; does not assert the ZIP itself was tested or a user request is required."
+      },
+      {
+        "startLine": 204,
+        "endLine": 210,
+        "nodeIds": [],
+        "edgeIds": [
+          "repeat-iteration"
+        ],
+        "treatment": "grouped",
+        "reason": "Summarizes the local iteration repeat, not an unsupported return to the packaging gate."
+      },
+      {
+        "startLine": 78,
+        "endLine": 86,
+        "nodeIds": [],
+        "edgeIds": [
+          "disclosure-edit"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 139,
+        "endLine": 145,
+        "nodeIds": [],
+        "edgeIds": [
+          "init-resource"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 176,
+        "endLine": 188,
+        "nodeIds": [],
+        "edgeIds": [
+          "package-resource"
+        ],
+        "treatment": "represented",
+        "reason": "Source supports this particular ordering, condition, or static association."
+      },
+      {
+        "startLine": 12,
+        "endLine": 24,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "context",
+        "reason": "Defines skills and their capabilities; not extra workflow stages."
+      },
+      {
+        "startLine": 30,
+        "endLine": 41,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "example",
+        "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+      },
+      {
+        "startLine": 98,
+        "endLine": 103,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "example",
+        "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+      },
+      {
+        "startLine": 116,
+        "endLine": 129,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "example",
+        "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+      },
+      {
+        "startLine": 143,
+        "endLine": 145,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "example",
+        "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+      },
+      {
+        "startLine": 180,
+        "endLine": 188,
+        "nodeIds": [],
+        "edgeIds": [],
+        "treatment": "example",
+        "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+      }
+    ]
+  }
+}

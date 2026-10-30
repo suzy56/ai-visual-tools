@@ -1,0 +1,217 @@
+{
+  "title": "Authorized backup workflow",
+  "description": "Authorization, archive, checksum match handoff, and owned resources.",
+  "provenance": {
+    "kind": "semantic",
+    "mode": "agent-audited complete source",
+    "sourceSha256": "099e89ca31002595ca35d8b235de0003328232681dd4b3540f0b4aec06121f45"
+  },
+  "sourceMarkdown": "# Authorized backup workflow\n\n## Step 1: authorize and archive\nObtain authorization for the destination and record the approving identity. Then create the archive at the approved destination while preserving permissions.\n\n## Step 2: verify and hand off\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes.\n\nRead `references/policy.md` for the permission requirement and use `scripts/backup.sh` for the archive operation. This explanation does not execute the script.\n",
+  "nodes": [
+    {
+      "id": "authorize",
+      "kind": "processing",
+      "label": "Authorize destination",
+      "description": "Obtain authorization and record the approving identity.",
+      "basis": "source",
+      "evidence": "SKILL.md:4-4\nObtain authorization for the destination and record the approving identity. Then create the archive at the approved destination while preserving permissions."
+    },
+    {
+      "id": "archive",
+      "kind": "processing",
+      "label": "Create archive",
+      "description": "Create the archive at the approved destination while preserving permissions. This stage retains the Step 1 archive detail after splitting authorization into its own inspectable action.",
+      "basis": "abstraction",
+      "rationale": "Step 1 contains two independently inspectable actions; the archive action retains the same destination and permission qualification.",
+      "evidence": "SKILL.md:3-4\n## Step 1: authorize and archive\nObtain authorization for the destination and record the approving identity. Then create the archive at the approved destination while preserving permissions."
+    },
+    {
+      "id": "verify",
+      "kind": "processing",
+      "label": "Verify checksum",
+      "description": "Verify the archive checksum; verification alone does not specify a mismatch destination.",
+      "basis": "source",
+      "evidence": "SKILL.md:7-7\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes."
+    },
+    {
+      "id": "checksum-match",
+      "kind": "decision",
+      "label": "Checksum matches?",
+      "description": "Route only the explicitly stated match outcome to handoff; mismatch destination remains a source gap.",
+      "basis": "abstraction",
+      "rationale": "The source states a conditional handoff only for a matching checksum and separately leaves mismatch routing unspecified.",
+      "evidence": "SKILL.md:7-7\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes."
+    },
+    {
+      "id": "handoff",
+      "kind": "processing",
+      "label": "Hand off approved archive",
+      "description": "Hand off the archive to the approved destination only when the checksum matches.",
+      "basis": "source",
+      "evidence": "SKILL.md:7-7\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes."
+    },
+    {
+      "id": "policy",
+      "kind": "resource",
+      "label": "references/policy.md",
+      "description": "Policy reference for the permission requirement; existence is not independently verified.",
+      "basis": "source",
+      "evidence": "SKILL.md:9-9\nRead `references/policy.md` for the permission requirement and use `scripts/backup.sh` for the archive operation. This explanation does not execute the script."
+    },
+    {
+      "id": "backup-script",
+      "kind": "resource",
+      "label": "scripts/backup.sh",
+      "description": "Named archive-operation script; source reference only, not executed by this explanation.",
+      "basis": "source",
+      "evidence": "SKILL.md:9-9\nRead `references/policy.md` for the permission requirement and use `scripts/backup.sh` for the archive operation. This explanation does not execute the script."
+    }
+  ],
+  "edges": [
+    {
+      "id": "authorize-then-archive",
+      "source": "authorize",
+      "target": "archive",
+      "label": "Then",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:4-4\nObtain authorization for the destination and record the approving identity. Then create the archive at the approved destination while preserving permissions."
+    },
+    {
+      "id": "archive-then-verify",
+      "source": "archive",
+      "target": "verify",
+      "label": "Then verify",
+      "relation": "flow",
+      "basis": "abstraction",
+      "rationale": "Step 2 follows Step 1 in the source; this preserves stage order while splitting the Step 1 compound action.",
+      "evidence": "SKILL.md:3-7\n## Step 1: authorize and archive\nObtain authorization for the destination and record the approving identity. Then create the archive at the approved destination while preserving permissions.\n\n## Step 2: verify and hand off\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes."
+    },
+    {
+      "id": "verify-to-match",
+      "source": "verify",
+      "target": "checksum-match",
+      "label": "Check result",
+      "relation": "flow",
+      "basis": "abstraction",
+      "rationale": "The explicit match-only handoff is modeled as a conditional outcome of checksum verification; no mismatch target is added.",
+      "evidence": "SKILL.md:7-7\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes."
+    },
+    {
+      "id": "match-to-handoff",
+      "source": "checksum-match",
+      "target": "handoff",
+      "label": "If checksum matches",
+      "relation": "flow",
+      "basis": "source",
+      "evidence": "SKILL.md:7-7\nVerify the archive checksum. If it matches, hand off the archive to the approved destination. The source does not specify where a checksum mismatch goes."
+    },
+    {
+      "id": "permissions-policy",
+      "source": "archive",
+      "target": "policy",
+      "label": "Permission requirement",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:9-9\nRead `references/policy.md` for the permission requirement and use `scripts/backup.sh` for the archive operation. This explanation does not execute the script."
+    },
+    {
+      "id": "archive-script",
+      "source": "archive",
+      "target": "backup-script",
+      "label": "Archive operation",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:9-9\nRead `references/policy.md` for the permission requirement and use `scripts/backup.sh` for the archive operation. This explanation does not execute the script."
+    }
+  ],
+  "coverage": {
+    "sourceSha256": "099e89ca31002595ca35d8b235de0003328232681dd4b3540f0b4aec06121f45",
+    "entries": [
+      {
+        "startLine": 1,
+        "endLine": 1,
+        "treatment": "context",
+        "reason": "Workflow title.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 3,
+        "endLine": 3,
+        "treatment": "grouped",
+        "reason": "Step 1 heading names the compound stage retained through split actions.",
+        "nodeIds": [
+          "archive"
+        ],
+        "edgeIds": [
+          "archive-then-verify"
+        ]
+      },
+      {
+        "startLine": 4,
+        "endLine": 4,
+        "treatment": "represented",
+        "reason": "Authorization and archive actions with explicit Then ordering.",
+        "nodeIds": [
+          "authorize",
+          "archive"
+        ],
+        "edgeIds": [
+          "authorize-then-archive"
+        ]
+      },
+      {
+        "startLine": 6,
+        "endLine": 6,
+        "treatment": "context",
+        "reason": "Step 2 heading identifies verification and handoff scope.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 7,
+        "endLine": 7,
+        "treatment": "represented",
+        "reason": "Checksum verification, match-only handoff, and unknown mismatch destination.",
+        "nodeIds": [
+          "verify",
+          "checksum-match",
+          "handoff"
+        ],
+        "edgeIds": [
+          "verify-to-match",
+          "match-to-handoff"
+        ]
+      },
+      {
+        "startLine": 9,
+        "endLine": 9,
+        "treatment": "represented",
+        "reason": "Policy and script resources plus no-execution constraint.",
+        "nodeIds": [
+          "policy",
+          "backup-script"
+        ],
+        "edgeIds": [
+          "permissions-policy",
+          "archive-script"
+        ]
+      }
+    ]
+  },
+  "warnings": [
+    "The source specifies no destination or continuation for checksum mismatch; no failure edge is invented."
+  ],
+  "recommendationsRequested": true,
+  "recommendations": [
+    {
+      "summary": "Add an independently recorded approval receipt before archive creation.",
+      "purpose": "Make authorization handoff auditable across operators.",
+      "assumptions": [
+        "An approval system exists and can issue a receipt.",
+        "The receipt can be stored without changing the source workflow."
+      ]
+    }
+  ]
+}

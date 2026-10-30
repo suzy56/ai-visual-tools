@@ -1,0 +1,411 @@
+{
+  "title": "PDF operation alternatives",
+  "description": "Complete fixtures/pdf-editor.md retained with each Quick Start operation owning its own script.",
+  "provenance": {
+    "kind": "semantic",
+    "mode": "agent-audited complete fixture",
+    "sourceSha256": "31ae5e751bdc926fa6d9bde094ad13055286b6058f71815003a8e30cbf31fe85"
+  },
+  "sourceMarkdown": "---\nname: pdf-editor\ncategory: document-processing\ndescription: This skill should be used when users need to manipulate PDF documents including rotation, merging, text extraction, compression, and form filling. It provides deterministic Python scripts for reliable PDF operations.\n---\n\n# PDF Editor Skill\n\n## Overview\nThis skill enables Claude to perform various PDF manipulation tasks using bundled Python scripts that ensure consistent, reliable results.\n\n## Quick Start\nTo use this skill, identify the PDF operation needed and execute the appropriate script:\n\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter\n2. **Merging**: Use `scripts/merge_pdfs.py` with file list\n3. **Text Extraction**: Use `scripts/extract_text.py` for OCR and text output\n4. **Compression**: Use `scripts/compress_pdf.py` with quality settings\n\n## Script Reference\n\n### rotate_pdf.py\n```python\nimport PyPDF2\nimport sys\n\ndef rotate_pdf(input_path, output_path, angle):\n    \"\"\"Rotate PDF pages by specified angle (90, 180, 270).\"\"\"\n    with open(input_path, 'rb') as file:\n        reader = PyPDF2.PdfReader(file)\n        writer = PyPDF2.PdfWriter()\n        \n        for page in reader.pages:\n            page.rotate(angle)\n            writer.add_page(page)\n        \n        with open(output_path, 'wb') as output_file:\n            writer.write(output_file)\n\nif __name__ == \"__main__\":\n    if len(sys.argv) != 4:\n        print(\"Usage: rotate_pdf.py <input.pdf> <output.pdf> <angle>\")\n        sys.exit(1)\n    \n    rotate_pdf(sys.argv[1], sys.argv[2], int(sys.argv[3]))\n",
+  "nodes": [
+    {
+      "id": "select-operation",
+      "kind": "input",
+      "label": "Select PDF operation",
+      "description": "Identify the requested operation from the explicit Quick Start alternatives.",
+      "basis": "source",
+      "evidence": "SKILL.md:13-13\nTo use this skill, identify the PDF operation needed and execute the appropriate script:"
+    },
+    {
+      "id": "rotation",
+      "kind": "processing",
+      "label": "Rotation",
+      "description": "Use scripts/rotate_pdf.py as the named script for this operation.",
+      "basis": "source",
+      "evidence": "SKILL.md:15-15\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter"
+    },
+    {
+      "id": "merging",
+      "kind": "processing",
+      "label": "Merging",
+      "description": "Use scripts/merge_pdfs.py as the named script for this operation.",
+      "basis": "source",
+      "evidence": "SKILL.md:16-16\n2. **Merging**: Use `scripts/merge_pdfs.py` with file list"
+    },
+    {
+      "id": "text-extraction",
+      "kind": "processing",
+      "label": "Text extraction",
+      "description": "Use scripts/extract_text.py as the named script for this operation.",
+      "basis": "source",
+      "evidence": "SKILL.md:17-17\n3. **Text Extraction**: Use `scripts/extract_text.py` for OCR and text output"
+    },
+    {
+      "id": "compression",
+      "kind": "processing",
+      "label": "Compression",
+      "description": "Use scripts/compress_pdf.py as the named script for this operation.",
+      "basis": "source",
+      "evidence": "SKILL.md:18-18\n4. **Compression**: Use `scripts/compress_pdf.py` with quality settings"
+    },
+    {
+      "id": "rotate-script",
+      "kind": "resource",
+      "label": "scripts/rotate_pdf.py",
+      "description": "Complete source code is retained as an example; it is not executed by graph extraction.",
+      "basis": "source",
+      "evidence": "SKILL.md:22-22\n### rotate_pdf.py"
+    }
+  ],
+  "edges": [
+    {
+      "id": "choose-rotation",
+      "source": "select-operation",
+      "target": "rotation",
+      "label": "Choose rotation",
+      "relation": "flow",
+      "basis": "abstraction",
+      "rationale": "The Quick Start lists this as a separate alternative operation with its own script.",
+      "evidence": "SKILL.md:13-15\nTo use this skill, identify the PDF operation needed and execute the appropriate script:\n\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter"
+    },
+    {
+      "id": "choose-merging",
+      "source": "select-operation",
+      "target": "merging",
+      "label": "Choose merging",
+      "relation": "flow",
+      "basis": "abstraction",
+      "rationale": "The Quick Start lists this as a separate alternative operation with its own script.",
+      "evidence": "SKILL.md:13-16\nTo use this skill, identify the PDF operation needed and execute the appropriate script:\n\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter\n2. **Merging**: Use `scripts/merge_pdfs.py` with file list"
+    },
+    {
+      "id": "choose-text-extraction",
+      "source": "select-operation",
+      "target": "text-extraction",
+      "label": "Choose text extraction",
+      "relation": "flow",
+      "basis": "abstraction",
+      "rationale": "The Quick Start lists this as a separate alternative operation with its own script.",
+      "evidence": "SKILL.md:13-17\nTo use this skill, identify the PDF operation needed and execute the appropriate script:\n\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter\n2. **Merging**: Use `scripts/merge_pdfs.py` with file list\n3. **Text Extraction**: Use `scripts/extract_text.py` for OCR and text output"
+    },
+    {
+      "id": "choose-compression",
+      "source": "select-operation",
+      "target": "compression",
+      "label": "Choose compression",
+      "relation": "flow",
+      "basis": "abstraction",
+      "rationale": "The Quick Start lists this as a separate alternative operation with its own script.",
+      "evidence": "SKILL.md:13-18\nTo use this skill, identify the PDF operation needed and execute the appropriate script:\n\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter\n2. **Merging**: Use `scripts/merge_pdfs.py` with file list\n3. **Text Extraction**: Use `scripts/extract_text.py` for OCR and text output\n4. **Compression**: Use `scripts/compress_pdf.py` with quality settings"
+    },
+    {
+      "id": "rotation-script-resource",
+      "source": "rotation",
+      "target": "rotate-script",
+      "label": "Named implementation",
+      "relation": "resource",
+      "basis": "source",
+      "evidence": "SKILL.md:15-15\n1. **Rotation**: Use `scripts/rotate_pdf.py` with angle parameter"
+    }
+  ],
+  "coverage": {
+    "sourceSha256": "31ae5e751bdc926fa6d9bde094ad13055286b6058f71815003a8e30cbf31fe85",
+    "entries": [
+      {
+        "startLine": 1,
+        "endLine": 1,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 2,
+        "endLine": 2,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 3,
+        "endLine": 3,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 4,
+        "endLine": 4,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 5,
+        "endLine": 5,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 7,
+        "endLine": 7,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 9,
+        "endLine": 9,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 10,
+        "endLine": 10,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 12,
+        "endLine": 12,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 13,
+        "endLine": 13,
+        "treatment": "represented",
+        "reason": "Quick Start selection instruction.",
+        "nodeIds": [
+          "select-operation"
+        ],
+        "edgeIds": []
+      },
+      {
+        "startLine": 15,
+        "endLine": 15,
+        "treatment": "represented",
+        "reason": "Rotation alternative and dedicated script.",
+        "nodeIds": [
+          "rotation"
+        ],
+        "edgeIds": [
+          "choose-rotation"
+        ]
+      },
+      {
+        "startLine": 16,
+        "endLine": 16,
+        "treatment": "represented",
+        "reason": "Merging alternative and dedicated script.",
+        "nodeIds": [
+          "merging"
+        ],
+        "edgeIds": [
+          "choose-merging"
+        ]
+      },
+      {
+        "startLine": 17,
+        "endLine": 17,
+        "treatment": "represented",
+        "reason": "Text extraction alternative and dedicated script.",
+        "nodeIds": [
+          "text-extraction"
+        ],
+        "edgeIds": [
+          "choose-text-extraction"
+        ]
+      },
+      {
+        "startLine": 18,
+        "endLine": 18,
+        "treatment": "represented",
+        "reason": "Compression alternative and dedicated script.",
+        "nodeIds": [
+          "compression"
+        ],
+        "edgeIds": [
+          "choose-compression"
+        ]
+      },
+      {
+        "startLine": 20,
+        "endLine": 20,
+        "treatment": "context",
+        "reason": "Frontmatter or explanatory source context retained.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 22,
+        "endLine": 22,
+        "treatment": "represented",
+        "reason": "Script reference heading retained as a resource.",
+        "nodeIds": [
+          "rotate-script"
+        ],
+        "edgeIds": [
+          "rotation-script-resource"
+        ]
+      },
+      {
+        "startLine": 23,
+        "endLine": 23,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 24,
+        "endLine": 24,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 25,
+        "endLine": 25,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 27,
+        "endLine": 27,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 28,
+        "endLine": 28,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 29,
+        "endLine": 29,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 30,
+        "endLine": 30,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 31,
+        "endLine": 31,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 33,
+        "endLine": 33,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 34,
+        "endLine": 34,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 35,
+        "endLine": 35,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 37,
+        "endLine": 37,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 38,
+        "endLine": 38,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 40,
+        "endLine": 40,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 41,
+        "endLine": 41,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 42,
+        "endLine": 42,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 43,
+        "endLine": 43,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      },
+      {
+        "startLine": 45,
+        "endLine": 45,
+        "treatment": "example",
+        "reason": "Complete script example retained as source data and not executed.",
+        "nodeIds": [],
+        "edgeIds": []
+      }
+    ]
+  },
+  "warnings": []
+}

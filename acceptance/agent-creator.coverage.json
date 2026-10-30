@@ -1,0 +1,393 @@
+{
+  "sourceSha256": "8f838531ae760bcfe0dbbf77450e9935cc27f016b9c47cafe9a98d5306cc1b0f",
+  "entries": [
+    {
+      "startLine": 1,
+      "endLine": 10,
+      "nodeIds": [
+        "request"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 92,
+      "endLine": 107,
+      "nodeIds": [
+        "usage-known"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Exposes the explicit skip condition, without equating an existing skill with known usage."
+    },
+    {
+      "startLine": 92,
+      "endLine": 107,
+      "nodeIds": [
+        "understand"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 109,
+      "endLine": 131,
+      "nodeIds": [
+        "plan"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 26,
+      "endLine": 76,
+      "nodeIds": [
+        "plan"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 133,
+      "endLine": 139,
+      "nodeIds": [
+        "init-mode"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Separates the explicit initialization skip from the actual template-generation action."
+    },
+    {
+      "startLine": 139,
+      "endLine": 154,
+      "nodeIds": [
+        "init-new"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 156,
+      "endLine": 174,
+      "nodeIds": [
+        "edit"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Combines the explicitly ordered two Step 4 subactivities while retaining both bodies and their qualifications."
+    },
+    {
+      "startLine": 176,
+      "endLine": 200,
+      "nodeIds": [
+        "package"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 190,
+      "endLine": 200,
+      "nodeIds": [
+        "validate"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Separates the source-specified validation result from invocation so both explicit outcomes can be represented."
+    },
+    {
+      "startLine": 200,
+      "endLine": 200,
+      "nodeIds": [
+        "repair"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 178,
+      "endLine": 200,
+      "nodeIds": [
+        "ready"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 202,
+      "endLine": 210,
+      "nodeIds": [
+        "iteration"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Groups the four stated iteration actions without an invented request-only predicate."
+    },
+    {
+      "startLine": 78,
+      "endLine": 86,
+      "nodeIds": [
+        "disclosure"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 139,
+      "endLine": 152,
+      "nodeIds": [
+        "init-script"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 176,
+      "endLine": 188,
+      "nodeIds": [
+        "package-script"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 88,
+      "endLine": 96,
+      "nodeIds": [],
+      "edgeIds": [
+        "begin"
+      ],
+      "treatment": "grouped",
+      "reason": "Connects the source trigger to the explicitly ordered process; applicability skips remain qualified."
+    },
+    {
+      "startLine": 92,
+      "endLine": 96,
+      "nodeIds": [],
+      "edgeIds": [
+        "understand-needed"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 90,
+      "endLine": 109,
+      "nodeIds": [],
+      "edgeIds": [
+        "skip-understand"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 105,
+      "endLine": 111,
+      "nodeIds": [],
+      "edgeIds": [
+        "understand-plan"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 131,
+      "endLine": 139,
+      "nodeIds": [],
+      "edgeIds": [
+        "plan-init"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 137,
+      "endLine": 139,
+      "nodeIds": [],
+      "edgeIds": [
+        "new-init"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 137,
+      "endLine": 158,
+      "nodeIds": [],
+      "edgeIds": [
+        "skip-init"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 149,
+      "endLine": 158,
+      "nodeIds": [],
+      "edgeIds": [
+        "init-edit"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 170,
+      "endLine": 178,
+      "nodeIds": [],
+      "edgeIds": [
+        "edit-package"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 190,
+      "endLine": 198,
+      "nodeIds": [],
+      "edgeIds": [
+        "automatic-validation"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 198,
+      "endLine": 200,
+      "nodeIds": [],
+      "edgeIds": [
+        "pass-package"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 200,
+      "endLine": 200,
+      "nodeIds": [],
+      "edgeIds": [
+        "failed-validation"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 200,
+      "endLine": 200,
+      "nodeIds": [],
+      "edgeIds": [
+        "rerun-packaging"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 176,
+      "endLine": 210,
+      "nodeIds": [],
+      "edgeIds": [
+        "next-iteration"
+      ],
+      "treatment": "grouped",
+      "reason": "Preserves the declared Step 5→6 order, with Step 6 after-testing qualification; does not assert the ZIP itself was tested or a user request is required."
+    },
+    {
+      "startLine": 204,
+      "endLine": 210,
+      "nodeIds": [],
+      "edgeIds": [
+        "repeat-iteration"
+      ],
+      "treatment": "grouped",
+      "reason": "Summarizes the local iteration repeat, not an unsupported return to the packaging gate."
+    },
+    {
+      "startLine": 78,
+      "endLine": 86,
+      "nodeIds": [],
+      "edgeIds": [
+        "disclosure-edit"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 139,
+      "endLine": 145,
+      "nodeIds": [],
+      "edgeIds": [
+        "init-resource"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 176,
+      "endLine": 188,
+      "nodeIds": [],
+      "edgeIds": [
+        "package-resource"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 12,
+      "endLine": 24,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "context",
+      "reason": "Defines skills and their capabilities; not extra workflow stages."
+    },
+    {
+      "startLine": 30,
+      "endLine": 41,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+    },
+    {
+      "startLine": 98,
+      "endLine": 103,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+    },
+    {
+      "startLine": 116,
+      "endLine": 129,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+    },
+    {
+      "startLine": 143,
+      "endLine": 145,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+    },
+    {
+      "startLine": 180,
+      "endLine": 188,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Illustrative layouts, user questions and command forms remain source data, not evidence of execution or mandatory sample resources."
+    }
+  ]
+}

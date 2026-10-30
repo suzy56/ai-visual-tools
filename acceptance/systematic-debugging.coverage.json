@@ -1,0 +1,443 @@
+{
+  "sourceSha256": "51c6435d98c83c42c96ba7c35725a0b2c376cd487fb1a4e6bd0ddbe7e33ef202",
+  "entries": [
+    {
+      "startLine": 1,
+      "endLine": 42,
+      "nodeIds": [
+        "start"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 48,
+      "endLine": 118,
+      "nodeIds": [
+        "root"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Groups Phase 1 actions while retaining independent conditional diagnostics; multiple components and deep stack are not mutually exclusive."
+    },
+    {
+      "startLine": 120,
+      "endLine": 141,
+      "nodeIds": [
+        "pattern"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 143,
+      "endLine": 166,
+      "nodeIds": [
+        "hypothesis"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Groups hypothesis formation and minimal testing, retaining the verification predicate as its own decision."
+    },
+    {
+      "startLine": 157,
+      "endLine": 160,
+      "nodeIds": [
+        "hypothesis-result"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 168,
+      "endLine": 177,
+      "nodeIds": [
+        "failing-test"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 179,
+      "endLine": 183,
+      "nodeIds": [
+        "single-fix"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 185,
+      "endLine": 189,
+      "nodeIds": [
+        "verify"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 185,
+      "endLine": 196,
+      "nodeIds": [
+        "fix-result"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Makes the explicit If Fix Doesn’t Work predicate visible after the verification action; does not invent a quality gate elsewhere."
+    },
+    {
+      "startLine": 191,
+      "endLine": 196,
+      "nodeIds": [
+        "attempt-count"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 198,
+      "endLine": 212,
+      "nodeIds": [
+        "question-architecture"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 259,
+      "endLine": 264,
+      "nodeIds": [
+        "resolved"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 8,
+      "endLine": 46,
+      "nodeIds": [
+        "process-guard"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 244,
+      "endLine": 255,
+      "nodeIds": [
+        "process-guard"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 257,
+      "endLine": 264,
+      "nodeIds": [
+        "process-guard"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Supporting requirements are retained in this stage detail, not turned into extra executable steps."
+    },
+    {
+      "startLine": 214,
+      "endLine": 242,
+      "nodeIds": [
+        "red-flags"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 266,
+      "endLine": 275,
+      "nodeIds": [
+        "external-cause"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 108,
+      "endLine": 118,
+      "nodeIds": [
+        "tracing-resource"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 277,
+      "endLine": 283,
+      "nodeIds": [
+        "supporting-techniques"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 172,
+      "endLine": 177,
+      "nodeIds": [
+        "tdd-resource"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 185,
+      "endLine": 189,
+      "nodeIds": [
+        "verify-resource"
+      ],
+      "edgeIds": [],
+      "treatment": "represented",
+      "reason": "Retains the explicit source instruction and its full body."
+    },
+    {
+      "startLine": 3,
+      "endLine": 20,
+      "nodeIds": [],
+      "edgeIds": [
+        "start-root"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 44,
+      "endLine": 48,
+      "nodeIds": [],
+      "edgeIds": [
+        "root-pattern"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 44,
+      "endLine": 46,
+      "nodeIds": [],
+      "edgeIds": [
+        "pattern-hypothesis"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 147,
+      "endLine": 160,
+      "nodeIds": [],
+      "edgeIds": [
+        "hypothesis-check"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 157,
+      "endLine": 160,
+      "nodeIds": [],
+      "edgeIds": [
+        "hypothesis-retry"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 157,
+      "endLine": 177,
+      "nodeIds": [],
+      "edgeIds": [
+        "hypothesis-implementation"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 172,
+      "endLine": 183,
+      "nodeIds": [],
+      "edgeIds": [
+        "test-before-fix"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 179,
+      "endLine": 189,
+      "nodeIds": [],
+      "edgeIds": [
+        "fix-verify"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 185,
+      "endLine": 196,
+      "nodeIds": [],
+      "edgeIds": [
+        "verify-result"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 259,
+      "endLine": 264,
+      "nodeIds": [],
+      "edgeIds": [
+        "fixed"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 191,
+      "endLine": 196,
+      "nodeIds": [],
+      "edgeIds": [
+        "fix-failed"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 191,
+      "endLine": 196,
+      "nodeIds": [],
+      "edgeIds": [
+        "retry-investigation"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 191,
+      "endLine": 210,
+      "nodeIds": [],
+      "edgeIds": [
+        "architectural-pause"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 8,
+      "endLine": 46,
+      "nodeIds": [],
+      "edgeIds": [
+        "phase-constraint"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 214,
+      "endLine": 242,
+      "nodeIds": [],
+      "edgeIds": [
+        "red-flag-constraint"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 225,
+      "endLine": 231,
+      "nodeIds": [],
+      "edgeIds": [
+        "architecture-constraint"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 266,
+      "endLine": 275,
+      "nodeIds": [],
+      "edgeIds": [
+        "external-condition"
+      ],
+      "treatment": "grouped",
+      "reason": "Associates the whole-process completion constraint with exceptional handling; deliberately not a flow edge out of Phase 1."
+    },
+    {
+      "startLine": 108,
+      "endLine": 118,
+      "nodeIds": [],
+      "edgeIds": [
+        "trace-reference"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 277,
+      "endLine": 283,
+      "nodeIds": [],
+      "edgeIds": [
+        "support-reference"
+      ],
+      "treatment": "grouped",
+      "reason": "Associates supporting techniques with systematic investigation, without asserting each must execute or excluding their use elsewhere."
+    },
+    {
+      "startLine": 172,
+      "endLine": 177,
+      "nodeIds": [],
+      "edgeIds": [
+        "test-reference"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 185,
+      "endLine": 189,
+      "nodeIds": [],
+      "edgeIds": [
+        "verification-reference"
+      ],
+      "treatment": "represented",
+      "reason": "Source supports this particular ordering, condition, or static association."
+    },
+    {
+      "startLine": 75,
+      "endLine": 85,
+      "nodeIds": [
+        "root"
+      ],
+      "edgeIds": [],
+      "treatment": "grouped",
+      "reason": "Diagnostic boundary pseudocode defines investigation requirements; it is preserved in Phase 1 details, not executed."
+    },
+    {
+      "startLine": 87,
+      "endLine": 106,
+      "nodeIds": [],
+      "edgeIds": [],
+      "treatment": "example",
+      "reason": "Multi-layer shell example demonstrates boundary evidence; retained verbatim, not executed and not an observed result."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "source": {
+    "url": "https://raw.githubusercontent.com/anthropics/claude-plugins-official/main/plugins/plugin-dev/skills/skill-development/SKILL.md",
+    "sha256": "d51b4e20043b13e462aa86c47ea82d43e216eb292871538127f4b12a54e4944f"
+  },
+  "graphSha256": "2e7bb88d23d202590c6db2b504b355bdf10cfed500fe5310810a33ccf5bf42fe",
+  "rendererBefore": {
+    "scripts/render.mjs": "f50556825dce1848a2859deca19e9da7513c625a2cfb0a379257653feb5e5931",
+    "scripts/validate-graph.mjs": "afcf3ea49f46234939ab06f9af966fa5abf047a1a70a1c6ebbc34f07a1a907f5",
+    "assets/circuit-viewer.html": "0c5b63f4dc6f4b29a8bffe479303b25c29bc87c9c04e9014a0d0b253a333ac49"
+  },
+  "rendererAfter": {
+    "scripts/render.mjs": "f50556825dce1848a2859deca19e9da7513c625a2cfb0a379257653feb5e5931",
+    "scripts/validate-graph.mjs": "afcf3ea49f46234939ab06f9af966fa5abf047a1a70a1c6ebbc34f07a1a907f5",
+    "assets/circuit-viewer.html": "0c5b63f4dc6f4b29a8bffe479303b25c29bc87c9c04e9014a0d0b253a333ac49"
+  },
+  "rendererUnchanged": true,
+  "observed": {
+    "nodes": 13,
+    "edges": 14,
+    "edgesMatchJson": true,
+    "descriptionsContained": true,
+    "sourceTextExact": true,
+    "zoom": true,
+    "fit": true,
+    "fullscreenAndEscape": true,
+    "evidenceInspector": true,
+    "illustrativeOutputAbsent": true
+  },
+  "noSkillHubVisited": true
+}
